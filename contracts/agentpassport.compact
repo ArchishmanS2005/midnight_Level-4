@@ -136,5 +136,5 @@ export circuit revoke_agent(): [] {
 /// This circuit reads public state only — no private data involved.
 /// Used by the frontend dashboard to display live contract metrics.
 export circuit get_stats(): Uint<64> {
-  return (read(agent_count)) as Uint<64>;
+  return agent_count as Uint<64>;
 }
