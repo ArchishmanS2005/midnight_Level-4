@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import MainframeHero from './components/MainframeHero'
 import WalletConnect from './components/WalletConnect'
 import AgentAuthorization from './components/AgentAuthorization'
@@ -17,8 +18,18 @@ export default function App() {
     resetProof,
   } = useMidnight()
 
-  const handleHeroActionClick = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
+  const [activeTab, setActiveTab] = useState<'register' | 'authorize' | 'revoke'>('register')
+
+  const handleHeroActionClick = (targetId: string) => {
+    if (targetId === 'register-tab-btn') {
+      setActiveTab('register')
+    } else if (targetId === 'authorize-tab-btn') {
+      setActiveTab('authorize')
+    } else if (targetId === 'revoke-tab-btn') {
+      setActiveTab('revoke')
+    }
+
+    const element = document.getElementById(targetId) || document.getElementById('operations-panel')
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     }
@@ -27,10 +38,16 @@ export default function App() {
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-body">
       {/* FULL SCREEN HERO LANDING PAGE */}
-      <MainframeHero onActionClick={handleHeroActionClick} />
+      <MainframeHero
+        onActionClick={handleHeroActionClick}
+        contractAddress={CONTRACT_CONFIG.address}
+      />
 
-      {/* DAPP TOTAL SYSTEM CONTROL CENTER */}
-      <div id="agent-passport-app" className="relative z-10 bg-neutral-950/95 border-t border-white/10 pt-20 pb-28 backdrop-blur-2xl">
+      {/* DAPP UNIFIED CONTROL CENTER CONTAINER */}
+      <div
+        id="agent-passport-app"
+        className="relative z-10 bg-black/80 backdrop-blur-2xl border-t border-white/10 pt-20 pb-28"
+      >
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-10">
           {/* Header Banner */}
           <div className="text-center mb-14 animate-fade-in">
@@ -48,7 +65,7 @@ export default function App() {
             </p>
 
             {/* Contract Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-neutral-900 border border-white/15 text-xs font-mono">
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-neutral-900/90 border border-white/15 text-xs font-mono">
               <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               <span className="text-neutral-400">Contract Address:</span>
               <span className="text-white font-medium">
@@ -60,7 +77,7 @@ export default function App() {
           </div>
 
           {/* Privacy Architecture Cards */}
-          <section id="how-it-works" className="mb-12">
+          <section id="privacy-architecture-section" className="mb-12">
             <div className="glass-card">
               <h3 className="text-sm font-heading font-medium text-white mb-4 flex items-center gap-2">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -107,7 +124,7 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column: Wallet & System Architecture */}
             <div className="lg:col-span-1 space-y-6">
-              <div id="studio">
+              <div id="wallet-connect-section">
                 <WalletConnect
                   wallet={wallet}
                   onConnect={connectWallet}
@@ -116,7 +133,7 @@ export default function App() {
               </div>
 
               {/* System Details */}
-              <div id="labs" className="glass-card">
+              <div id="system-architecture-section" className="glass-card">
                 <h4 className="text-xs font-heading font-medium text-neutral-400 uppercase tracking-wider mb-4">
                   System Architecture
                 </h4>
@@ -125,7 +142,7 @@ export default function App() {
                     { label: 'Smart Contract', value: 'Midnight Compact' },
                     { label: 'Privacy Engine', value: 'Zero-Knowledge Proofs' },
                     { label: 'Target Chain', value: 'Midnight Preview' },
-                    { label: 'Interface Agent', value: 'A.R.I.A (Mainframe)' },
+                    { label: 'Interface Agent', value: 'A.R.I.A (AgentPassport)' },
                     { label: 'Wallet API', value: 'Lace (Midnight)' },
                   ].map((item) => (
                     <div key={item.label} className="flex justify-between items-center text-xs">
@@ -137,7 +154,7 @@ export default function App() {
               </div>
 
               {/* Execution Pipeline */}
-              <div id="openings" className="glass-card">
+              <div id="execution-pipeline-section" className="glass-card">
                 <h4 className="text-xs font-heading font-medium text-neutral-400 uppercase tracking-wider mb-4">
                   Proof Execution Pipeline
                 </h4>
@@ -161,23 +178,23 @@ export default function App() {
             </div>
 
             {/* Right Column: Operations Panel */}
-            <div id="register-agent" className="lg:col-span-2">
-              <div id="authorize-action">
-                <AgentAuthorization
-                  isWalletConnected={wallet.status === 'connected'}
-                  proof={proof}
-                  stats={stats}
-                  onRegister={registerAgent}
-                  onAuthorize={authorizeAction}
-                  onRevoke={revokeAgent}
-                  onResetProof={resetProof}
-                />
-              </div>
+            <div id="operations-panel" className="lg:col-span-2">
+              <AgentAuthorization
+                isWalletConnected={wallet.status === 'connected'}
+                proof={proof}
+                stats={stats}
+                selectedTab={activeTab}
+                onTabChange={setActiveTab}
+                onRegister={registerAgent}
+                onAuthorize={authorizeAction}
+                onRevoke={revokeAgent}
+                onResetProof={resetProof}
+              />
             </div>
           </div>
 
           {/* Total System Footer */}
-          <footer id="shop" className="mt-20 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-body">
+          <footer className="mt-20 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-body">
             <div className="text-xs text-neutral-400">
               AgentPassport v1.0.0 • Midnight Builder Challenge Level 4
             </div>

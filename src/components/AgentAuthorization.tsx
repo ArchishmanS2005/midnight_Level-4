@@ -8,22 +8,27 @@ interface AgentAuthorizationProps {
   isWalletConnected: boolean
   proof: ProofState
   stats: ContractStats
+  selectedTab?: ActionTab
   onRegister: (secretKey: string, credentialHash: string) => Promise<boolean>
   onAuthorize: (requestedAmount: number, budget: number) => Promise<boolean>
   onRevoke: (secretKey: string) => Promise<boolean>
   onResetProof: () => void
+  onTabChange?: (tab: ActionTab) => void
 }
 
 export default function AgentAuthorization({
   isWalletConnected,
   proof,
   stats,
+  selectedTab,
   onRegister,
   onAuthorize,
   onRevoke,
   onResetProof,
+  onTabChange,
 }: AgentAuthorizationProps) {
-  const [activeTab, setActiveTab] = useState<ActionTab>('register')
+  const [internalTab, setInternalTab] = useState<ActionTab>('register')
+  const activeTab = selectedTab || internalTab
 
   // Form states
   const [secretKey, setSecretKey] = useState('')
@@ -142,9 +147,10 @@ export default function AgentAuthorization({
             return (
               <button
                 key={tab.id}
-                id={`tab-${tab.id}`}
+                id={`${tab.id}-tab-btn`}
                 onClick={() => {
-                  setActiveTab(tab.id)
+                  setInternalTab(tab.id)
+                  if (onTabChange) onTabChange(tab.id)
                   onResetProof()
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs sm:text-sm font-heading transition-all duration-200 cursor-pointer ${

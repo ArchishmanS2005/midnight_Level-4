@@ -3,9 +3,10 @@ import { useTypewriter } from '../hooks/useTypewriter'
 
 interface MainframeHeroProps {
   onActionClick?: (action: string) => void
+  contractAddress?: string
 }
 
-export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
+export default function MainframeHero({ onActionClick, contractAddress }: MainframeHeroProps) {
   // Video mouse scrubbing refs & state
   const videoRef = useRef<HTMLVideoElement>(null)
   const prevXRef = useRef<number | null>(null)
@@ -15,16 +16,16 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
   // Mobile menu state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Copy email feedback
+  // Copy feedback state
   const [copied, setCopied] = useState(false)
 
   // Action pills animation
   const [pillsVisible, setPillsVisible] = useState(false)
 
-  // Typewriter hook
+  // Typewriter hook - concise, project-specific statement
   const { displayed, done: typewritingDone } = useTypewriter(
-    'Glad you stopped in. Good taste tends to find us. Now, what are we building?',
-    { speed: 38, startDelay: 600 }
+    'Autonomous AI agents execute actions. We make their permissions private using Zero-Knowledge Proofs on Midnight.',
+    { speed: 32, startDelay: 500 }
   )
 
   // Trigger pill visibility 400ms after load
@@ -77,10 +78,11 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
     }
   }
 
-  // Handle email copy
-  const handleCopyEmail = (e: React.MouseEvent) => {
+  // Handle address copy
+  const handleCopyAddress = (e: React.MouseEvent) => {
     e.stopPropagation()
-    navigator.clipboard.writeText('hello@mainframe.co')
+    const addr = contractAddress || 'PENDING_DEPLOYMENT'
+    navigator.clipboard.writeText(addr)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -109,83 +111,86 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
         className="fixed inset-0 z-0 w-full h-full object-cover object-[70%_center] pointer-events-none"
       />
 
-      {/* FIXED NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-10 w-full px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
+      {/* UNIFIED NAVBAR */}
+      <nav className="fixed top-0 left-0 right-0 z-20 w-full px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/10">
         {/* Logo (left) */}
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <span
-            className="text-[21px] sm:text-[26px] tracking-tight text-black font-normal"
+            className="text-[20px] sm:text-[25px] tracking-tight text-white font-normal"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
-            Mainframe®
+            AgentPassport®
           </span>
           <span
-            className="text-[25px] sm:text-[30px] text-black select-none"
+            className="text-[22px] sm:text-[28px] text-white select-none"
             style={{ letterSpacing: '-0.02em' }}
           >
             ✳︎
           </span>
+          <span className="hidden lg:inline-block text-xs text-neutral-400 font-mono ml-2 border-l border-white/20 pl-3">
+            Midnight Privacy Layer
+          </span>
         </div>
 
         {/* Desktop Nav Links (center, hidden below md) */}
-        <div className="hidden md:flex items-center text-[23px] text-black font-normal">
+        <div className="hidden md:flex items-center text-[20px] text-white font-normal">
           <button
-            onClick={() => handleNavClick('labs')}
+            onClick={() => handleNavClick('register-tab-btn')}
             className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
           >
-            Labs
+            Register
           </button>
-          <span className="select-none">,&nbsp;</span>
+          <span className="select-none text-white/40">,&nbsp;</span>
           <button
-            onClick={() => handleNavClick('studio')}
+            onClick={() => handleNavClick('authorize-tab-btn')}
             className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
           >
-            Studio
+            Authorize
           </button>
-          <span className="select-none">,&nbsp;</span>
+          <span className="select-none text-white/40">,&nbsp;</span>
           <button
-            onClick={() => handleNavClick('openings')}
+            onClick={() => handleNavClick('revoke-tab-btn')}
             className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
           >
-            Openings
+            Revoke
           </button>
-          <span className="select-none">,&nbsp;</span>
+          <span className="select-none text-white/40">,&nbsp;</span>
           <button
-            onClick={() => handleNavClick('shop')}
+            onClick={() => handleNavClick('privacy-architecture-section')}
             className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
           >
-            Shop
+            Privacy Model
           </button>
         </div>
 
         {/* Desktop CTA (right, hidden below md) */}
         <div className="hidden md:block">
           <button
-            onClick={() => handleNavClick('agent-passport-app')}
-            className="text-[23px] text-black underline underline-offset-2 hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 font-inherit"
+            onClick={() => handleNavClick('wallet-connect-section')}
+            className="text-[20px] text-white underline underline-offset-2 hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 font-inherit"
           >
-            Get in touch
+            Connect Wallet
           </button>
         </div>
 
         {/* Mobile Hamburger Button (visible below md) */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-[5px] z-20 cursor-pointer bg-transparent border-none focus:outline-none"
+          className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-[5px] z-30 cursor-pointer bg-transparent border-none focus:outline-none"
           aria-label="Toggle navigation menu"
         >
           <span
-            className={`w-6 h-[2px] bg-black duration-300 transition-all ${
+            className={`w-6 h-[2px] bg-white duration-300 transition-all ${
               mobileMenuOpen ? 'rotate-45 translate-y-[7px]' : ''
             }`}
           />
           <span
-            className={`w-6 h-[2px] bg-black duration-300 transition-all ${
+            className={`w-6 h-[2px] bg-white duration-300 transition-all ${
               mobileMenuOpen ? 'opacity-0' : 'opacity-100'
             }`}
           />
           <span
-            className={`w-6 h-[2px] bg-black duration-300 transition-all ${
+            className={`w-6 h-[2px] bg-white duration-300 transition-all ${
               mobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''
             }`}
           />
@@ -194,46 +199,46 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
 
       {/* MOBILE OVERLAY MENU */}
       <div
-        className={`fixed inset-0 z-9 bg-white/95 backdrop-blur-sm flex flex-col justify-center px-8 gap-8 transition-all duration-300 md:hidden ${
+        className={`fixed inset-0 z-20 bg-black/95 backdrop-blur-xl flex flex-col justify-center px-8 gap-8 transition-all duration-300 md:hidden ${
           mobileMenuOpen
             ? 'opacity-100 pointer-events-auto'
             : 'opacity-0 pointer-events-none'
         }`}
       >
         <button
-          onClick={() => handleNavClick('labs')}
-          className="text-[32px] font-medium text-black text-left bg-transparent border-none p-0"
+          onClick={() => handleNavClick('register-tab-btn')}
+          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
         >
-          Labs
+          Register Agent
         </button>
         <button
-          onClick={() => handleNavClick('studio')}
-          className="text-[32px] font-medium text-black text-left bg-transparent border-none p-0"
+          onClick={() => handleNavClick('authorize-tab-btn')}
+          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
         >
-          Studio
+          Authorize Action
         </button>
         <button
-          onClick={() => handleNavClick('openings')}
-          className="text-[32px] font-medium text-black text-left bg-transparent border-none p-0"
+          onClick={() => handleNavClick('revoke-tab-btn')}
+          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
         >
-          Openings
+          Revoke Agent
         </button>
         <button
-          onClick={() => handleNavClick('shop')}
-          className="text-[32px] font-medium text-black text-left bg-transparent border-none p-0"
+          onClick={() => handleNavClick('privacy-architecture-section')}
+          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
         >
-          Shop
+          Zero-Knowledge Model
         </button>
         <button
-          onClick={() => handleNavClick('agent-passport-app')}
-          className="text-[32px] font-medium text-black underline text-left bg-transparent border-none p-0"
+          onClick={() => handleNavClick('wallet-connect-section')}
+          className="text-[32px] font-medium text-white underline text-left bg-transparent border-none p-0"
         >
-          Get in touch
+          Connect Lace Wallet
         </button>
       </div>
 
       {/* HERO SECTION */}
-      <section className="relative z-1 h-screen flex flex-col justify-end pb-12 md:justify-center md:pb-0 px-5 sm:px-8 md:px-10 overflow-hidden">
+      <section className="relative z-10 h-screen flex flex-col justify-end pb-16 md:justify-center md:pb-0 px-5 sm:px-8 md:px-10 overflow-hidden">
         <div className="max-w-xl relative z-10">
           {/* 1. Blurred intro label */}
           <div
@@ -246,7 +251,7 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
           >
             Hey there, meet A.R.I.A,
             <br />
-            Mainframe's Adaptive Response Interface Agent
+            AgentPassport's Autonomous Privacy Interface Agent
           </div>
 
           {/* 2. Typewriter text */}
@@ -263,7 +268,7 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
             )}
           </p>
 
-          {/* 3. Action pill buttons */}
+          {/* 3. Action pill buttons - PROJECT USEFUL & SPECIFIC */}
           <div
             className={`flex flex-wrap gap-y-1 transition-all duration-400 ease-out ${
               pillsVisible
@@ -273,49 +278,48 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
           >
             {/* White pill 1 */}
             <button
-              onClick={() => handleNavClick('register-agent')}
+              onClick={() => handleNavClick('register-tab-btn')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
             >
-              Pitch us an idea
+              Register Agent
             </button>
 
             {/* White pill 2 */}
             <button
-              onClick={() => handleNavClick('openings')}
+              onClick={() => handleNavClick('authorize-tab-btn')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
             >
-              Come work here
+              Authorize Action
             </button>
 
             {/* White pill 3 */}
             <button
-              onClick={() => handleNavClick('authorize-action')}
+              onClick={() => handleNavClick('revoke-tab-btn')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
             >
-              Send a brief hello
+              Revoke Agent
             </button>
 
             {/* White pill 4 */}
             <button
-              onClick={() => handleNavClick('how-it-works')}
+              onClick={() => handleNavClick('privacy-architecture-section')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
             >
-              See how we operate
+              Zero-Knowledge Model
             </button>
 
             {/* Outline pill 5 with copy icon */}
             <button
-              onClick={handleCopyEmail}
+              onClick={handleCopyAddress}
               className="inline-flex items-center justify-center text-white bg-transparent border border-white rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap gap-2 sm:gap-3 cursor-pointer hover:bg-white hover:text-black transition-colors duration-200 relative"
-              title="Click to copy email address"
+              title="Click to copy Midnight Preview Contract Address"
             >
               <span>
-                Reach us:{' '}
-                <span className="underline underline-offset-1">
-                  hello@mainframe.co
+                Midnight Preview:{' '}
+                <span className="underline underline-offset-1 font-mono">
+                  {contractAddress && contractAddress !== 'PENDING_DEPLOYMENT' ? `${contractAddress.slice(0, 10)}...` : 'Contract Active'}
                 </span>
               </span>
-              {/* Inline SVG 12x12 copy icon */}
               <svg
                 width="12"
                 height="12"
@@ -342,8 +346,8 @@ export default function MainframeHero({ onActionClick }: MainframeHeroProps) {
               </svg>
 
               {copied && (
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[11px] px-2 py-0.5 rounded shadow">
-                  Copied!
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[11px] px-2 py-0.5 rounded shadow border border-white/20">
+                  Copied Address!
                 </span>
               )}
             </button>
