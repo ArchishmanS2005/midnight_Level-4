@@ -9,10 +9,11 @@
     "preview": "vite preview",
     "test": "jest --config jest.config.cjs",
     "test:ci": "jest --config jest.config.cjs --forceExit",
-    "compile": "compact compile contracts/agentpassport.compact managed",
+    "compile": "wsl /home/archishman_sarkar/.local/bin/compact compile contracts/agentpassport.compact managed",
     "deploy": "tsx scripts/deploy.ts"
   },
   "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "^0.16.0",
     "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
     "@midnight-ntwrk/midnight-js-contracts": "^4.1.1",
     "@midnight-ntwrk/midnight-js-network-id": "^4.1.1",
