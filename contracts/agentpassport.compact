@@ -103,7 +103,7 @@ export circuit authorize_action(requested_amount: Uint<64>): [] {
   // Core ZK assertion: prove budget >= requested amount
   // This is the heart of the privacy model — we prove sufficiency without
   // revealing the actual budget value to the blockchain
-  if budget >= requested_amount {
+  if (budget >= requested_amount) {
     // Authorization approved — increment public tally
     increment(total_authorizations);
   } else {
