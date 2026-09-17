@@ -25,38 +25,33 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-body">
       {/* FULL SCREEN HERO LANDING PAGE */}
       <MainframeHero onActionClick={handleHeroActionClick} />
 
-      {/* DAPP INTERACTIVE APPLICATION CONTAINER */}
-      <div id="agent-passport-app" className="relative z-10 bg-slate-950 border-t border-slate-800/80 pt-16 pb-24">
-        {/* Subtle Ambient Background Gradients */}
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* DAPP TOTAL SYSTEM CONTROL CENTER */}
+      <div id="agent-passport-app" className="relative z-10 bg-neutral-950/95 border-t border-white/10 pt-20 pb-28 backdrop-blur-2xl">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-10">
           {/* Header Banner */}
-          <div className="text-center mb-12 animate-fade-in">
-            <div className="inline-flex items-center gap-2 badge proof-generating mb-4">
-              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-              Midnight Preview Network • Privacy Engine
+          <div className="text-center mb-14 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-heading font-medium tracking-wide text-white mb-5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Midnight Preview Network • ZK Privacy Engine
             </div>
 
-            <h2 className="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">
-              <span className="gradient-text">AgentPassport</span> Control Center
+            <h2 className="text-3xl sm:text-5xl font-heading font-normal text-white mb-4 tracking-tight">
+              AgentPassport Control Center
             </h2>
 
-            <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto mb-6 leading-relaxed">
-              Cryptographic permissions for autonomous AI agents on Midnight Network.
-              Execute private transactions with zero-knowledge proofs without exposing secrets.
+            <p className="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto mb-6 leading-relaxed font-body">
+              Cryptographic permissions for autonomous AI agents on Midnight Network. Execute private transactions with zero-knowledge proofs without exposing secrets.
             </p>
 
             {/* Contract Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-purple-500/20 text-xs font-mono">
-              <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-              <span className="text-slate-400">Contract Address:</span>
-              <span className="text-purple-300 font-medium">
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-neutral-900 border border-white/15 text-xs font-mono">
+              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-neutral-400">Contract Address:</span>
+              <span className="text-white font-medium">
                 {CONTRACT_CONFIG.address === 'PENDING_DEPLOYMENT'
                   ? 'Awaiting deployment to Preview'
                   : CONTRACT_CONFIG.address}
@@ -64,11 +59,11 @@ export default function App() {
             </div>
           </div>
 
-          {/* Privacy Model Section */}
+          {/* Privacy Architecture Cards */}
           <section id="how-it-works" className="mb-12">
-            <div className="glass card">
-              <h3 className="text-sm font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2">
+            <div className="glass-card">
+              <h3 className="text-sm font-heading font-medium text-white mb-4 flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
                 Zero-Knowledge Privacy Architecture
@@ -76,7 +71,7 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <PrivacyCard
                   title="PUBLIC On-Chain"
-                  color="cyan"
+                  type="cyan"
                   items={[
                     'Agent count (total registered)',
                     'Total authorized actions',
@@ -86,7 +81,7 @@ export default function App() {
                 />
                 <PrivacyCard
                   title="PRIVATE (Off-Chain Only)"
-                  color="purple"
+                  type="purple"
                   items={[
                     'Agent secret key / identity',
                     'Permission budget amount',
@@ -96,7 +91,7 @@ export default function App() {
                 />
                 <PrivacyCard
                   title="PROVEN Without Revealing"
-                  color="green"
+                  type="green"
                   items={[
                     '"Budget ≥ requested amount"',
                     '"Agent key is valid & registered"',
@@ -108,9 +103,9 @@ export default function App() {
             </div>
           </section>
 
-          {/* Main Controls Grid */}
+          {/* Main Interactive Controls Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column: Wallet & Architecture */}
+            {/* Left Column: Wallet & System Architecture */}
             <div className="lg:col-span-1 space-y-6">
               <div id="studio">
                 <WalletConnect
@@ -120,33 +115,33 @@ export default function App() {
                 />
               </div>
 
-              {/* Stack Details */}
-              <div id="labs" className="glass card">
-                <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              {/* System Details */}
+              <div id="labs" className="glass-card">
+                <h4 className="text-xs font-heading font-medium text-neutral-400 uppercase tracking-wider mb-4">
                   System Architecture
                 </h4>
-                <div className="space-y-2.5">
+                <div className="space-y-3 font-body">
                   {[
-                    { label: 'Smart Contract', value: 'Midnight Compact', color: 'purple' },
-                    { label: 'Privacy Engine', value: 'Zero-Knowledge Proofs', color: 'cyan' },
-                    { label: 'Target Chain', value: 'Midnight Preview', color: 'pink' },
-                    { label: 'Interface Agent', value: 'A.R.I.A (Mainframe)', color: 'purple' },
-                    { label: 'Wallet API', value: 'Lace (Midnight)', color: 'cyan' },
+                    { label: 'Smart Contract', value: 'Midnight Compact' },
+                    { label: 'Privacy Engine', value: 'Zero-Knowledge Proofs' },
+                    { label: 'Target Chain', value: 'Midnight Preview' },
+                    { label: 'Interface Agent', value: 'A.R.I.A (Mainframe)' },
+                    { label: 'Wallet API', value: 'Lace (Midnight)' },
                   ].map((item) => (
                     <div key={item.label} className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">{item.label}</span>
-                      <span className="font-mono text-cyan-300 font-medium">{item.value}</span>
+                      <span className="text-neutral-400">{item.label}</span>
+                      <span className="font-heading text-white font-medium">{item.value}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Execution Flow */}
-              <div id="openings" className="glass card">
-                <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              {/* Execution Pipeline */}
+              <div id="openings" className="glass-card">
+                <h4 className="text-xs font-heading font-medium text-neutral-400 uppercase tracking-wider mb-4">
                   Proof Execution Pipeline
                 </h4>
-                <ol className="space-y-3">
+                <ol className="space-y-3 font-body">
                   {[
                     { step: '1', text: 'Generate private key & budget off-chain' },
                     { step: '2', text: 'Commit agent state to Compact ledger' },
@@ -154,8 +149,8 @@ export default function App() {
                     { step: '4', text: 'Verify proof on Midnight consensus node' },
                     { step: '5', text: 'Update public counters without revealing secrets' },
                   ].map((item) => (
-                    <li key={item.step} className="flex items-start gap-2.5 text-xs text-slate-400">
-                      <span className="shrink-0 w-5 h-5 rounded-full bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-[10px] font-bold text-white">
+                    <li key={item.step} className="flex items-start gap-3 text-xs text-neutral-300">
+                      <span className="shrink-0 w-5 h-5 rounded-full bg-white text-black font-heading font-semibold flex items-center justify-center text-[10px]">
                         {item.step}
                       </span>
                       <span className="leading-snug">{item.text}</span>
@@ -165,7 +160,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right Column: Agent Passport Operations */}
+            {/* Right Column: Operations Panel */}
             <div id="register-agent" className="lg:col-span-2">
               <div id="authorize-action">
                 <AgentAuthorization
@@ -181,17 +176,17 @@ export default function App() {
             </div>
           </div>
 
-          {/* Footer & Links */}
-          <footer id="shop" className="mt-16 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-xs text-slate-400">
+          {/* Total System Footer */}
+          <footer id="shop" className="mt-20 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-body">
+            <div className="text-xs text-neutral-400">
               AgentPassport v1.0.0 • Midnight Builder Challenge Level 4
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6 text-xs text-neutral-400">
               <a
                 href="https://docs.midnight.network"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-slate-400 hover:text-white transition-colors"
+                className="hover:text-white transition-colors"
               >
                 Midnight Docs
               </a>
@@ -199,7 +194,7 @@ export default function App() {
                 href="https://github.com/ArchishmanS2005/midnight_Level-4"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-slate-400 hover:text-white transition-colors"
+                className="hover:text-white transition-colors"
               >
                 GitHub Codebase
               </a>
@@ -213,35 +208,35 @@ export default function App() {
 
 function PrivacyCard({
   title,
-  color,
+  type,
   items,
 }: {
   title: string
-  color: 'purple' | 'cyan' | 'green'
+  type: 'cyan' | 'purple' | 'green'
   items: string[]
 }) {
-  const colors = {
-    purple: 'border-purple-500/30 bg-purple-950/40 text-purple-400',
-    cyan: 'border-cyan-500/30 bg-cyan-950/40 text-cyan-400',
-    green: 'border-green-500/30 bg-green-950/40 text-green-400',
+  const styles = {
+    cyan: 'border-white/15 bg-neutral-900/50 text-white',
+    purple: 'border-white/15 bg-neutral-900/50 text-white',
+    green: 'border-emerald-500/30 bg-emerald-950/20 text-emerald-300',
   }
 
   const icons = {
-    purple: '🔒',
     cyan: '📡',
+    purple: '🔒',
     green: '✅',
   }
 
   return (
-    <div className={`rounded-xl p-4 border ${colors[color]}`}>
-      <div className="text-xs font-bold mb-3 flex items-center gap-1.5">
-        <span>{icons[color]}</span>
+    <div className={`p-4 rounded-xl border backdrop-blur-md ${styles[type]}`}>
+      <div className="text-xs font-heading font-medium mb-3 flex items-center gap-1.5">
+        <span>{icons[type]}</span>
         {title}
       </div>
-      <ul className="space-y-1.5">
+      <ul className="space-y-1.5 font-body">
         {items.map((item, i) => (
-          <li key={i} className="text-xs text-slate-400 flex items-start gap-1.5">
-            <span className="text-current/60 shrink-0">•</span>
+          <li key={i} className="text-xs text-neutral-400 flex items-start gap-1.5">
+            <span className="text-white/40 shrink-0">•</span>
             {item}
           </li>
         ))}

@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { ProofState, ContractStats } from '../hooks/useMidnight'
 import { generateSecretKey, bytesToHex, hashCredential, getTxExplorerUrl, truncate } from '../utils/contract'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type ActionTab = 'register' | 'authorize' | 'revoke'
 
 interface AgentAuthorizationProps {
@@ -16,8 +14,6 @@ interface AgentAuthorizationProps {
   onResetProof: () => void
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function AgentAuthorization({
   isWalletConnected,
   proof,
@@ -29,20 +25,14 @@ export default function AgentAuthorization({
 }: AgentAuthorizationProps) {
   const [activeTab, setActiveTab] = useState<ActionTab>('register')
 
-  // Registration form state
+  // Form states
   const [secretKey, setSecretKey] = useState('')
   const [credential, setCredential] = useState('')
-
-  // Authorization form state
   const [requestedAmount, setRequestedAmount] = useState('')
   const [budget, setBudget] = useState('')
-
-  // Revocation form state
   const [revokeKey, setRevokeKey] = useState('')
 
   const isProcessing = proof.status === 'generating' || proof.status === 'submitting'
-
-  // ── Handlers ──────────────────────────────────────────────────────────────
 
   const handleRegister = async () => {
     if (!secretKey || !credential) return
@@ -67,17 +57,14 @@ export default function AgentAuthorization({
     setSecretKey(bytesToHex(key))
   }
 
-  // ── Tab configs ───────────────────────────────────────────────────────────
   const tabs: { id: ActionTab; label: string; icon: React.ReactNode }[] = [
     {
       id: 'register',
       label: 'Register Agent',
       icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
           <circle cx="12" cy="7" r="4" />
-          <line x1="12" y1="11" x2="12" y2="17" />
-          <line x1="9" y1="14" x2="15" y2="14" />
         </svg>
       ),
     },
@@ -85,7 +72,7 @@ export default function AgentAuthorization({
       id: 'authorize',
       label: 'Authorize Action',
       icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           <polyline points="9 12 11 14 15 10" />
         </svg>
@@ -95,7 +82,7 @@ export default function AgentAuthorization({
       id: 'revoke',
       label: 'Revoke Agent',
       icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="10" />
           <line x1="15" y1="9" x2="9" y2="15" />
           <line x1="9" y1="9" x2="15" y2="15" />
@@ -106,14 +93,14 @@ export default function AgentAuthorization({
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-4">
+      {/* Stats Counter Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           label="Registered Agents"
           value={stats.agentCount}
-          color="purple"
+          type="white"
           icon={
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -124,9 +111,9 @@ export default function AgentAuthorization({
         <StatCard
           label="Authorized Actions"
           value={stats.totalAuthorizations}
-          color="green"
+          type="emerald"
           icon={
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               <polyline points="9 12 11 14 15 10" />
             </svg>
@@ -135,9 +122,9 @@ export default function AgentAuthorization({
         <StatCard
           label="Rejected Actions"
           value={stats.totalRejections}
-          color="red"
+          type="rose"
           icon={
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <line x1="15" y1="9" x2="9" y2="15" />
               <line x1="9" y1="9" x2="15" y2="15" />
@@ -146,48 +133,49 @@ export default function AgentAuthorization({
         />
       </div>
 
-      {/* Main Panel */}
-      <div className="glass card">
-        {/* Tab Navigation */}
-        <div className="flex gap-1 mb-6 p-1 rounded-lg bg-midnight-950/60 border border-purple-900/20">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              id={`tab-${tab.id}`}
-              onClick={() => {
-                setActiveTab(tab.id)
-                onResetProof()
-              }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 ${
-                activeTab === tab.id
-                  ? 'bg-gradient-to-r from-purple-600/80 to-cyan-600/80 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-              }`}
-            >
-              {tab.icon}
-              <span className="hidden sm:inline">{tab.label}</span>
-            </button>
-          ))}
+      {/* Main Operations Card */}
+      <div className="glass-card">
+        {/* Segmented Pill Tabs */}
+        <div className="flex gap-1.5 p-1.5 rounded-full bg-black/70 border border-white/10 mb-6">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                id={`tab-${tab.id}`}
+                onClick={() => {
+                  setActiveTab(tab.id)
+                  onResetProof()
+                }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs sm:text-sm font-heading transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? 'bg-white text-black font-semibold shadow-lg'
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </button>
+            )
+          })}
         </div>
 
-        {/* Privacy Model Reminder */}
-        <div className="mb-6 p-3 rounded-lg bg-purple-900/10 border border-purple-500/20 text-xs">
-          <div className="flex items-start gap-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" className="shrink-0 mt-0.5">
+        {/* Privacy Active Banner */}
+        <div className="mb-6 p-4 rounded-xl bg-white/5 border border-white/10 text-xs flex items-start gap-3">
+          <div className="p-1 rounded-md bg-white/10 text-white shrink-0 mt-0.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
-            <div className="text-slate-400">
-              <span className="text-purple-400 font-semibold">ZK Privacy Active: </span>
-              Your private data (secret keys, budget, credentials) is processed locally on your device.
-              Only cryptographic proofs are submitted to the Midnight Preview network.
-            </div>
+          </div>
+          <div className="text-neutral-300 font-body leading-relaxed">
+            <strong className="text-white font-heading">ZK Privacy Engine Active:</strong> Secrets, budgets, and credentials remain private on your device. Only verified cryptographic proofs are submitted to Midnight Preview.
           </div>
         </div>
 
-        {/* Disabled overlay */}
+        {/* Disabled Overlay Warning if Wallet Disconnected */}
         {!isWalletConnected && (
-          <div className="mb-4 p-4 rounded-lg proof-pending text-sm text-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="inline-block mb-1 mr-1">
+          <div className="mb-6 p-4 rounded-xl proof-pending text-xs text-center font-heading">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="inline-block mb-1 mr-1">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
@@ -195,43 +183,40 @@ export default function AgentAuthorization({
           </div>
         )}
 
-        {/* ── Register Tab ── */}
+        {/* ── REGISTER TAB ── */}
         {activeTab === 'register' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-2">
-                Agent Secret Key{' '}
-                <span className="text-purple-400 ml-1 font-mono">(Private — never on-chain)</span>
+              <label className="block text-xs font-heading font-medium text-white mb-2">
+                Agent Secret Key <span className="text-neutral-400 font-mono font-normal">(Private — never on-chain)</span>
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-2.5">
                 <input
                   id="register-secret-key"
                   type="text"
                   value={secretKey}
                   onChange={(e) => setSecretKey(e.target.value)}
                   placeholder="Enter or generate a 32-byte hex secret key..."
-                  className="input-neon"
+                  className="input-neon flex-1"
                   disabled={!isWalletConnected || isProcessing}
                 />
                 <button
                   id="generate-key-btn"
                   onClick={handleGenerateKey}
                   disabled={!isWalletConnected || isProcessing}
-                  className="btn-ghost text-xs whitespace-nowrap px-3"
-                  title="Generate random key"
+                  className="btn-mainframe-outline text-xs px-4 shrink-0"
                 >
                   Generate
                 </button>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                This is your agent's private identity. Store it securely — it's needed for authorization and revocation.
+              <p className="text-[11px] text-neutral-400 mt-1.5 font-body">
+                This is your agent's private identity. Store it securely — needed for authorization &amp; revocation.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-2">
-                Agent Credential{' '}
-                <span className="text-purple-400 ml-1 font-mono">(Private — hashed locally)</span>
+              <label className="block text-xs font-heading font-medium text-white mb-2">
+                Agent Credential <span className="text-neutral-400 font-mono font-normal">(Private — hashed locally)</span>
               </label>
               <input
                 id="register-credential"
@@ -242,8 +227,8 @@ export default function AgentAuthorization({
                 className="input-neon"
                 disabled={!isWalletConnected || isProcessing}
               />
-              <p className="text-xs text-slate-500 mt-1">
-                Will be hashed locally before use. The original credential never leaves your device.
+              <p className="text-[11px] text-neutral-400 mt-1.5 font-body">
+                Hashed locally prior to proof generation. The original credential never leaves your device.
               </p>
             </div>
 
@@ -251,12 +236,12 @@ export default function AgentAuthorization({
               id="register-agent-btn"
               onClick={handleRegister}
               disabled={!isWalletConnected || isProcessing || !secretKey || !credential}
-              className="btn-neon w-full"
+              className="btn-mainframe-primary w-full py-3.5 mt-2"
             >
               {isProcessing ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="spinner w-4 h-4 border-2" style={{ borderTopColor: 'white' }} />
-                  {proof.status === 'generating' ? 'Generating ZK Proof...' : 'Submitting to Network...'}
+                <span className="flex items-center gap-2">
+                  <div className="spinner w-4 h-4 border-2" style={{ borderTopColor: '#000000' }} />
+                  <span>{proof.status === 'generating' ? 'Generating ZK Proof...' : 'Submitting to Network...'}</span>
                 </span>
               ) : (
                 'Register Agent with ZK Proof'
@@ -265,13 +250,12 @@ export default function AgentAuthorization({
           </div>
         )}
 
-        {/* ── Authorize Tab ── */}
+        {/* ── AUTHORIZE TAB ── */}
         {activeTab === 'authorize' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-2">
-                Permission Budget (tDUST){' '}
-                <span className="text-purple-400 ml-1 font-mono">(Private — never revealed)</span>
+              <label className="block text-xs font-heading font-medium text-white mb-2">
+                Permission Budget (tDUST) <span className="text-neutral-400 font-mono font-normal">(Private — never revealed)</span>
               </label>
               <input
                 id="authorize-budget"
@@ -283,15 +267,14 @@ export default function AgentAuthorization({
                 min="1"
                 disabled={!isWalletConnected || isProcessing}
               />
-              <p className="text-xs text-slate-500 mt-1">
-                This value stays private. The ZK proof only reveals whether it's sufficient.
+              <p className="text-[11px] text-neutral-400 mt-1.5 font-body">
+                Budget amount stays private. The ZK circuit proves sufficiency without exposing amount.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-2">
-                Requested Action Amount (tDUST){' '}
-                <span className="text-cyan-400 ml-1 font-mono">(Public — on-chain)</span>
+              <label className="block text-xs font-heading font-medium text-white mb-2">
+                Requested Action Amount (tDUST) <span className="text-neutral-400 font-mono font-normal">(Public — on-chain)</span>
               </label>
               <input
                 id="authorize-amount"
@@ -303,23 +286,24 @@ export default function AgentAuthorization({
                 min="1"
                 disabled={!isWalletConnected || isProcessing}
               />
-              <p className="text-xs text-slate-500 mt-1">
-                The requested amount is public. The circuit proves budget ≥ amount without revealing budget.
+              <p className="text-[11px] text-neutral-400 mt-1.5 font-body">
+                Action cost is public. The circuit proves Budget ≥ Requested Amount.
               </p>
             </div>
 
-            {/* Budget comparison preview */}
+            {/* Budget Preview Box */}
             {budget && requestedAmount && (
-              <div className={`p-3 rounded-lg text-xs ${
-                parseInt(budget) >= parseInt(requestedAmount) ? 'proof-verified' : 'proof-rejected'
+              <div className={`p-4 rounded-xl text-xs font-mono border ${
+                parseInt(budget) >= parseInt(requestedAmount)
+                  ? 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300'
+                  : 'border-rose-500/40 bg-rose-950/30 text-rose-300'
               }`}>
-                <div className="font-semibold mb-1">ZK Proof Preview:</div>
+                <div className="font-heading font-semibold mb-1 uppercase tracking-wider text-[11px]">ZK Proof Verdict:</div>
                 <div>
                   Budget ({parseInt(budget).toLocaleString()}) {parseInt(budget) >= parseInt(requestedAmount) ? '≥' : '<'}{' '}
                   Requested ({parseInt(requestedAmount).toLocaleString()}) →{' '}
-                  <strong>{parseInt(budget) >= parseInt(requestedAmount) ? 'WILL AUTHORIZE' : 'WILL REJECT'}</strong>
+                  <strong className="underline">{parseInt(budget) >= parseInt(requestedAmount) ? 'WILL AUTHORIZE' : 'WILL REJECT'}</strong>
                 </div>
-                <div className="mt-1 text-current/70">Budget value stays private — only this verdict is proven on-chain.</div>
               </div>
             )}
 
@@ -327,56 +311,55 @@ export default function AgentAuthorization({
               id="authorize-action-btn"
               onClick={handleAuthorize}
               disabled={!isWalletConnected || isProcessing || !requestedAmount || !budget}
-              className="btn-neon w-full"
+              className="btn-mainframe-primary w-full py-3.5 mt-2"
             >
               {isProcessing ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="spinner w-4 h-4 border-2" style={{ borderTopColor: 'white' }} />
-                  {proof.status === 'generating' ? 'Generating ZK Proof...' : 'Submitting to Network...'}
+                <span className="flex items-center gap-2">
+                  <div className="spinner w-4 h-4 border-2" style={{ borderTopColor: '#000000' }} />
+                  <span>{proof.status === 'generating' ? 'Generating ZK Proof...' : 'Submitting to Network...'}</span>
                 </span>
               ) : (
-                'Authorize with ZK Proof'
+                'Authorize Action with ZK Proof'
               )}
             </button>
           </div>
         )}
 
-        {/* ── Revoke Tab ── */}
+        {/* ── REVOKE TAB ── */}
         {activeTab === 'revoke' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-2">
-                Agent Secret Key{' '}
-                <span className="text-purple-400 ml-1 font-mono">(Proves ownership)</span>
+              <label className="block text-xs font-heading font-medium text-white mb-2">
+                Agent Secret Key <span className="text-neutral-400 font-mono font-normal">(Proves ownership)</span>
               </label>
               <input
                 id="revoke-secret-key"
                 type="text"
                 value={revokeKey}
                 onChange={(e) => setRevokeKey(e.target.value)}
-                placeholder="Enter the agent's secret key to prove ownership..."
+                placeholder="Enter agent secret key to prove ownership..."
                 className="input-neon"
                 disabled={!isWalletConnected || isProcessing}
               />
-              <p className="text-xs text-slate-500 mt-1">
-                The ZK proof verifies you know the key without revealing it on-chain.
+              <p className="text-[11px] text-neutral-400 mt-1.5 font-body">
+                The ZK proof verifies ownership without revealing key on-chain.
               </p>
             </div>
 
-            <div className="p-3 rounded-lg bg-red-900/10 border border-red-500/20 text-xs text-red-400">
-              ⚠️ Revoking an agent is irreversible. The agent_count will be decremented on-chain.
+            <div className="p-4 rounded-xl bg-rose-950/30 border border-rose-500/30 text-xs text-rose-300 font-body">
+              ⚠️ Revocation is permanent. The agent count counter will be decremented on the Compact ledger.
             </div>
 
             <button
               id="revoke-agent-btn"
               onClick={handleRevoke}
               disabled={!isWalletConnected || isProcessing || !revokeKey}
-              className="w-full py-3 px-4 bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-400 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-mainframe-outline w-full py-3.5 text-rose-300 border-rose-500/40 hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all cursor-pointer"
             >
               {isProcessing ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="spinner w-4 h-4 border-2" style={{ borderTopColor: '#ef4444' }} />
-                  {proof.status === 'generating' ? 'Generating Revocation Proof...' : 'Submitting...'}
+                <span className="flex items-center gap-2">
+                  <div className="spinner w-4 h-4 border-2" style={{ borderTopColor: '#ffffff' }} />
+                  <span>Submitting Revocation...</span>
                 </span>
               ) : (
                 'Revoke Agent'
@@ -386,29 +369,29 @@ export default function AgentAuthorization({
         )}
       </div>
 
-      {/* Proof Status Panel */}
+      {/* Proof Terminal Output Card */}
       {proof.status !== 'idle' && (
-        <div className={`card animate-fade-in ${getProofPanelClass(proof.status)}`}>
+        <div className={`p-5 rounded-2xl border font-mono text-xs shadow-2xl animate-fade-in ${getProofPanelClass(proof.status)}`}>
           <div className="flex items-start gap-3">
             <ProofStatusIcon status={proof.status} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold">{getProofStatusLabel(proof.status)}</span>
+                <span className="font-heading font-semibold text-sm">{getProofStatusLabel(proof.status)}</span>
                 {proof.timestamp && (
-                  <span className="text-xs opacity-60">{new Date(proof.timestamp).toLocaleTimeString()}</span>
+                  <span className="text-[11px] opacity-60">{new Date(proof.timestamp).toLocaleTimeString()}</span>
                 )}
               </div>
 
               {proof.message && (
-                <p className="text-sm opacity-80">{proof.message}</p>
+                <p className="opacity-90 leading-relaxed">{proof.message}</p>
               )}
               {proof.error && (
-                <p className="text-sm text-red-300">{proof.error}</p>
+                <p className="text-rose-300 leading-relaxed">{proof.error}</p>
               )}
 
               {proof.txHash && (
-                <div className="mt-2 p-2 rounded bg-black/30 flex items-center gap-2">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+                <div className="mt-3 p-2.5 rounded-lg bg-black/60 border border-white/10 flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                   </svg>
@@ -416,20 +399,10 @@ export default function AgentAuthorization({
                     href={getTxExplorerUrl(proof.txHash)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs font-mono underline hover:opacity-80 truncate"
+                    className="text-xs font-mono underline hover:text-white truncate"
                   >
-                    Tx: {truncate(proof.txHash, 16, 8)}
+                    Tx Hash: {truncate(proof.txHash, 16, 8)}
                   </a>
-                </div>
-              )}
-
-              {/* Processing animation */}
-              {(proof.status === 'generating' || proof.status === 'submitting') && (
-                <div className="mt-3 h-1 rounded-full bg-current/20 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-current animate-pulse"
-                    style={{ width: proof.status === 'generating' ? '60%' : '90%', transition: 'width 0.5s ease' }}
-                  />
                 </div>
               )}
             </div>
@@ -437,10 +410,10 @@ export default function AgentAuthorization({
             {(proof.status === 'verified' || proof.status === 'rejected' || proof.status === 'error') && (
               <button
                 onClick={onResetProof}
-                className="text-current/60 hover:text-current/90 transition-colors p-1 shrink-0"
+                className="opacity-60 hover:opacity-100 transition-opacity p-1 shrink-0 cursor-pointer"
                 title="Dismiss"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
@@ -453,32 +426,30 @@ export default function AgentAuthorization({
   )
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
 function StatCard({
   label,
   value,
-  color,
+  type,
   icon,
 }: {
   label: string
   value: number
-  color: 'purple' | 'green' | 'red'
+  type: 'white' | 'emerald' | 'rose'
   icon: React.ReactNode
 }) {
-  const colors = {
-    purple: 'text-purple-400 border-purple-500/20 bg-purple-900/10',
-    green: 'text-green-400 border-green-500/20 bg-green-900/10',
-    red: 'text-red-400 border-red-500/20 bg-red-900/10',
+  const styles = {
+    white: 'border-white/15 bg-neutral-900/60 text-white',
+    emerald: 'border-emerald-500/25 bg-emerald-950/20 text-emerald-400',
+    rose: 'border-rose-500/25 bg-rose-950/20 text-rose-400',
   }
 
   return (
-    <div className={`glass card flex flex-col gap-2 border ${colors[color]}`}>
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-slate-400">{label}</span>
-        <div className="opacity-60">{icon}</div>
+    <div className={`p-5 rounded-2xl border backdrop-blur-md flex flex-col gap-2 ${styles[type]}`}>
+      <div className="flex items-center justify-between text-neutral-400 font-heading text-xs">
+        <span>{label}</span>
+        <div className="opacity-80">{icon}</div>
       </div>
-      <div className="text-2xl font-bold font-mono tabular-nums">{value.toLocaleString()}</div>
+      <div className="text-3xl sm:text-4xl font-heading font-medium tracking-tight text-white">{value.toLocaleString()}</div>
     </div>
   )
 }
@@ -487,13 +458,13 @@ function ProofStatusIcon({ status }: { status: ProofState['status'] }) {
   if (status === 'generating' || status === 'submitting') {
     return (
       <div className="shrink-0 mt-0.5">
-        <div className="spinner" style={{ borderTopColor: 'currentColor' }} />
+        <div className="spinner" style={{ borderTopColor: '#ffffff' }} />
       </div>
     )
   }
   if (status === 'verified') {
     return (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0 mt-0.5">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" className="shrink-0 mt-0.5">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         <polyline points="9 12 11 14 15 10" />
       </svg>
@@ -501,7 +472,7 @@ function ProofStatusIcon({ status }: { status: ProofState['status'] }) {
   }
   if (status === 'rejected') {
     return (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 mt-0.5">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" className="shrink-0 mt-0.5">
         <circle cx="12" cy="12" r="10" />
         <line x1="15" y1="9" x2="9" y2="15" />
         <line x1="9" y1="9" x2="15" y2="15" />
