@@ -13,9 +13,6 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
   const isSeekingRef = useRef(false)
   const targetTimeRef = useRef(0)
 
-  // Mobile menu state
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   // Copy feedback state
   const [copied, setCopied] = useState(false)
 
@@ -88,7 +85,6 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
   }
 
   const handleNavClick = (sectionId: string) => {
-    setMobileMenuOpen(false)
     if (onActionClick) {
       onActionClick(sectionId)
     }
@@ -111,134 +107,8 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
         className="fixed inset-0 z-0 w-full h-full object-cover object-[70%_center] pointer-events-none"
       />
 
-      {/* UNIFIED NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-20 w-full px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/10">
-        {/* Logo (left) */}
-        <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <span
-            className="text-[20px] sm:text-[25px] tracking-tight text-white font-normal"
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
-            AgentPassport®
-          </span>
-          <span
-            className="text-[22px] sm:text-[28px] text-white select-none"
-            style={{ letterSpacing: '-0.02em' }}
-          >
-            ✳︎
-          </span>
-          <span className="hidden lg:inline-block text-xs text-neutral-400 font-mono ml-2 border-l border-white/20 pl-3">
-            Midnight Privacy Layer
-          </span>
-        </div>
-
-        {/* Desktop Nav Links (center, hidden below md) */}
-        <div className="hidden md:flex items-center text-[20px] text-white font-normal">
-          <button
-            onClick={() => handleNavClick('register-tab-btn')}
-            className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
-          >
-            Register
-          </button>
-          <span className="select-none text-white/40">,&nbsp;</span>
-          <button
-            onClick={() => handleNavClick('authorize-tab-btn')}
-            className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
-          >
-            Authorize
-          </button>
-          <span className="select-none text-white/40">,&nbsp;</span>
-          <button
-            onClick={() => handleNavClick('revoke-tab-btn')}
-            className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
-          >
-            Revoke
-          </button>
-          <span className="select-none text-white/40">,&nbsp;</span>
-          <button
-            onClick={() => handleNavClick('privacy-architecture-section')}
-            className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
-          >
-            Privacy Model
-          </button>
-        </div>
-
-        {/* Desktop CTA (right, hidden below md) */}
-        <div className="hidden md:block">
-          <button
-            onClick={() => handleNavClick('wallet-connect-section')}
-            className="text-[20px] text-white underline underline-offset-2 hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 font-inherit"
-          >
-            Connect Wallet
-          </button>
-        </div>
-
-        {/* Mobile Hamburger Button (visible below md) */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-[5px] z-30 cursor-pointer bg-transparent border-none focus:outline-none"
-          aria-label="Toggle navigation menu"
-        >
-          <span
-            className={`w-6 h-[2px] bg-white duration-300 transition-all ${
-              mobileMenuOpen ? 'rotate-45 translate-y-[7px]' : ''
-            }`}
-          />
-          <span
-            className={`w-6 h-[2px] bg-white duration-300 transition-all ${
-              mobileMenuOpen ? 'opacity-0' : 'opacity-100'
-            }`}
-          />
-          <span
-            className={`w-6 h-[2px] bg-white duration-300 transition-all ${
-              mobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''
-            }`}
-          />
-        </button>
-      </nav>
-
-      {/* MOBILE OVERLAY MENU */}
-      <div
-        className={`fixed inset-0 z-20 bg-black/95 backdrop-blur-xl flex flex-col justify-center px-8 gap-8 transition-all duration-300 md:hidden ${
-          mobileMenuOpen
-            ? 'opacity-100 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <button
-          onClick={() => handleNavClick('register-tab-btn')}
-          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
-        >
-          Register Agent
-        </button>
-        <button
-          onClick={() => handleNavClick('authorize-tab-btn')}
-          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
-        >
-          Authorize Action
-        </button>
-        <button
-          onClick={() => handleNavClick('revoke-tab-btn')}
-          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
-        >
-          Revoke Agent
-        </button>
-        <button
-          onClick={() => handleNavClick('privacy-architecture-section')}
-          className="text-[32px] font-medium text-white text-left bg-transparent border-none p-0"
-        >
-          Zero-Knowledge Model
-        </button>
-        <button
-          onClick={() => handleNavClick('wallet-connect-section')}
-          className="text-[32px] font-medium text-white underline text-left bg-transparent border-none p-0"
-        >
-          Connect Lace Wallet
-        </button>
-      </div>
-
-      {/* HERO SECTION */}
-      <section className="relative z-10 h-screen flex flex-col justify-end pb-16 md:justify-center md:pb-0 px-5 sm:px-8 md:px-10 overflow-hidden">
+      {/* HERO SECTION (Clean, no top bar) */}
+      <section className="relative z-10 h-screen flex flex-col justify-end pb-16 md:justify-center md:pb-0 px-5 sm:px-8 md:px-12 overflow-hidden">
         <div className="max-w-xl relative z-10">
           {/* 1. Blurred intro label */}
           <div
@@ -256,7 +126,7 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
 
           {/* 2. Typewriter text */}
           <p
-            className="text-black mb-5 sm:mb-6 font-normal min-h-[54px]"
+            className="text-black mb-6 sm:mb-7 font-normal min-h-[54px]"
             style={{
               fontSize: 'clamp(18px, 4vw, 26px)',
               lineHeight: 1.35,
@@ -268,15 +138,27 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
             )}
           </p>
 
-          {/* 3. Action pill buttons - PROJECT USEFUL & SPECIFIC */}
+          {/* 3. Action pill buttons - GET STARTED & DIRECT DAPP ACTIONS */}
           <div
-            className={`flex flex-wrap gap-y-1 transition-all duration-400 ease-out ${
+            className={`flex flex-wrap items-center gap-y-1 transition-all duration-400 ease-out ${
               pillsVisible
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 translate-y-[8px]'
             }`}
           >
-            {/* White pill 1 */}
+            {/* Primary High-Impact GET STARTED Button */}
+            <button
+              onClick={() => handleNavClick('operations-panel')}
+              className="inline-flex items-center justify-center bg-black text-white border border-black rounded-full text-[14px] sm:text-[16px] font-heading font-semibold px-6 py-[0.45em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-neutral-800 transition-all duration-200 shadow-xl gap-2 hover:scale-105"
+            >
+              <span>Get Started</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+
+            {/* White pill 1 - Register */}
             <button
               onClick={() => handleNavClick('register-tab-btn')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
@@ -284,7 +166,7 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
               Register Agent
             </button>
 
-            {/* White pill 2 */}
+            {/* White pill 2 - Authorize */}
             <button
               onClick={() => handleNavClick('authorize-tab-btn')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
@@ -292,7 +174,7 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
               Authorize Action
             </button>
 
-            {/* White pill 3 */}
+            {/* White pill 3 - Revoke */}
             <button
               onClick={() => handleNavClick('revoke-tab-btn')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
@@ -300,7 +182,7 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
               Revoke Agent
             </button>
 
-            {/* White pill 4 */}
+            {/* White pill 4 - ZK Model */}
             <button
               onClick={() => handleNavClick('privacy-architecture-section')}
               className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap cursor-pointer hover:bg-black hover:text-white transition-colors duration-200"
