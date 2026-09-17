@@ -9,13 +9,14 @@
     "preview": "vite preview",
     "test": "jest --config jest.config.cjs",
     "test:ci": "jest --config jest.config.cjs --forceExit",
-    "compile": "compact compile contracts/agentpassport.compact --output managed"
+    "compile": "compact compile contracts/agentpassport.compact --output managed",
+    "deploy": "tsx scripts/deploy.ts"
   },
   "dependencies": {
+    "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
     "@midnight-ntwrk/midnight-js-contracts": "^4.1.1",
     "@midnight-ntwrk/midnight-js-network-id": "^4.1.1",
     "@midnight-ntwrk/midnight-js-utils": "^4.1.1",
-    "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -31,6 +32,7 @@
     "postcss": "^8.4.45",
     "tailwindcss": "^3.4.10",
     "ts-jest": "^29.2.5",
+    "tsx": "^4.23.13",
     "typescript": "^5.5.3",
     "vite": "^5.4.2"
   }
