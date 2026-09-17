@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "jest --config jest.config.cjs",
     "test:ci": "jest --config jest.config.cjs --forceExit",
-    "compile": "compact compile contracts/agentpassport.compact --output managed",
+    "compile": "compact compile contracts/agentpassport.compact managed",
     "deploy": "tsx scripts/deploy.ts"
   },
   "dependencies": {
