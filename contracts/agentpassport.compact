@@ -78,7 +78,7 @@ export circuit register_agent(): [] {
   assert(cred != pad(32, ""), "Credential hash must not be zero");
 
   // Increment public counter — only the count is disclosed, not the identity
-  increment(agent_count);
+  agent_count.increment(1);
 }
 
 /// authorize_action — Proves an agent is authorized to perform an action.
@@ -103,13 +103,13 @@ export circuit authorize_action(requested_amount: Uint<64>): [] {
   // Core ZK assertion: prove budget >= requested amount
   // This is the heart of the privacy model — we prove sufficiency without
   // revealing the actual budget value to the blockchain
-  if (budget >= requested_amount) {
+  if (disclose(budget >= requested_amount)) {
     // Authorization approved — increment public tally
-    increment(total_authorizations);
+    total_authorizations.increment(1);
   } else {
     // Budget insufficient — increment rejection tally
     // Still private: we don't reveal what the budget is, only that it's insufficient
-    increment(total_rejections);
+    total_rejections.increment(1);
   }
 }
 
@@ -128,7 +128,7 @@ export circuit revoke_agent(): [] {
   // Decrement agent count — only public change
   // Note: In production, you would also track revoked commitments in a
   // public Set to prevent re-registration with the same key.
-  decrement(agent_count);
+  agent_count.decrement(1);
 }
 
 /// get_stats — Returns current public statistics (view function).
