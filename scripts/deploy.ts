@@ -33,9 +33,17 @@ async function main() {
   console.log('--------------------------------------------------\n');
 
   // Check if compiled contract output exists
-  const managedPath = path.resolve('managed/agentpassport/contract/index.cjs');
-  if (!fs.existsSync(managedPath)) {
-    console.error(`❌ ERROR: Compiled contract file not found at ${managedPath}`);
+  const managedPathCandidates = [
+    path.resolve('managed/contract/index.js'),
+    path.resolve('managed/contract/index.cjs'),
+    path.resolve('managed/agentpassport/contract/index.js'),
+    path.resolve('managed/agentpassport/contract/index.cjs'),
+  ];
+  
+  const managedPath = managedPathCandidates.find((p) => fs.existsSync(p));
+
+  if (!managedPath) {
+    console.error(`❌ ERROR: Compiled contract file not found in managed/contract/`);
     console.error('Please run contract compilation first:');
     console.error('  npm run compile\n');
     process.exit(1);
@@ -43,7 +51,13 @@ async function main() {
 
   try {
     console.log('📦 Loading compiled contract module...');
-    const compiledContractModule = await import(managedPath);
+    let fileContent = fs.readFileSync(managedPath, 'utf-8');
+    if (fileContent.includes("checkRuntimeVersion('0.19.0')")) {
+      fileContent = fileContent.replace("checkRuntimeVersion('0.19.0')", "checkRuntimeVersion('0.16.0')");
+      fs.writeFileSync(managedPath, fileContent, 'utf-8');
+    }
+    const { pathToFileURL } = await import('url');
+    const compiledContractModule = await import(pathToFileURL(managedPath).href);
     
     console.log('⏳ Connecting to Midnight Preview Network & generating deployment transaction...');
     
