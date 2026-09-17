@@ -72,10 +72,10 @@ export circuit register_agent(): [] {
 
   // Validate: secret key must be non-empty (not all zeros)
   // This is a ZK assertion — proven without revealing sk
-  assert(sk != pad(32, 0x00), "Agent secret key must not be zero");
+  assert(sk != pad(32, ""), "Agent secret key must not be zero");
 
   // Validate: credential hash must be non-empty
-  assert(cred != pad(32, 0x00), "Credential hash must not be zero");
+  assert(cred != pad(32, ""), "Credential hash must not be zero");
 
   // Increment public counter — only the count is disclosed, not the identity
   increment(agent_count);
@@ -95,10 +95,10 @@ export circuit authorize_action(requested_amount: Uint<64>): [] {
   const cred = credential_hash();
 
   // Validate agent identity is registered (non-zero key)
-  assert(sk != pad(32, 0x00), "Agent not registered: invalid secret key");
+  assert(sk != pad(32, ""), "Agent not registered: invalid secret key");
 
   // Validate credential
-  assert(cred != pad(32, 0x00), "Invalid credential hash");
+  assert(cred != pad(32, ""), "Invalid credential hash");
 
   // Core ZK assertion: prove budget >= requested amount
   // This is the heart of the privacy model — we prove sufficiency without
@@ -123,7 +123,7 @@ export circuit revoke_agent(): [] {
   const sk = agent_secret_key();
 
   // Assert key is valid (i.e., caller is the legitimate agent owner)
-  assert(sk != pad(32, 0x00), "Cannot revoke: invalid agent identity");
+  assert(sk != pad(32, ""), "Cannot revoke: invalid agent identity");
 
   // Decrement agent count — only public change
   // Note: In production, you would also track revoked commitments in a
