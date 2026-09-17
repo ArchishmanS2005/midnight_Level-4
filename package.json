@@ -1,0 +1,37 @@
+{
+  "name": "agentpassport",
+  "version": "1.0.0",
+  "description": "The Privacy Layer for Autonomous AI Agents — built on Midnight Network",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "jest --config jest.config.cjs",
+    "test:ci": "jest --config jest.config.cjs --forceExit",
+    "compile": "compact compile contracts/agentpassport.compact --output managed"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/midnight-js-contracts": "^4.1.1",
+    "@midnight-ntwrk/midnight-js-network-id": "^4.1.1",
+    "@midnight-ntwrk/midnight-js-utils": "^4.1.1",
+    "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "postcss": "^8.4.45",
+    "tailwindcss": "^3.4.10",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.2"
+  }
+}
