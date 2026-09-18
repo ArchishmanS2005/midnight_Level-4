@@ -3,6 +3,7 @@
 [![CI Pipeline](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml/badge.svg)](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml)
 [![Midnight Network](https://img.shields.io/badge/Network-Midnight%20Preview-a855f7)](https://midnight.network)
 [![Live Demo](https://img.shields.io/badge/Vercel-Live%20Demo-000000?logo=vercel&logoColor=white)](https://midnight-level-4.vercel.app/)
+[![Demo Video](https://img.shields.io/badge/Video-Demo%20Video-red?logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1VCleits574larlz8Nv94vhmkl2xzGDHW/view?usp=sharing)
 [![X Profile](https://img.shields.io/badge/X-AgentPassport05-1DA1F2?logo=x&logoColor=white)](https://x.com/AgentPassport05)
 [![License](https://img.shields.io/badge/License-MIT-06b6d4)](./LICENSE)
 
@@ -24,6 +25,7 @@
 | Resource | Link |
 |----------|------|
 | 🚀 **Live Demo** | [midnight-level-4.vercel.app](https://midnight-level-4.vercel.app/) |
+| 🎬 **Demo Video** | [Watch Video Walkthrough on Google Drive](https://drive.google.com/file/d/1VCleits574larlz8Nv94vhmkl2xzGDHW/view?usp=sharing) |
 | 📜 **Smart Contract** | [`4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4`](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
 | 🔍 **Midnight Explorer** | [Block 914,791 — Verified SUCCESS](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
 | 🐦 **X (Twitter)** | [@AgentPassport05](https://x.com/AgentPassport05) |
