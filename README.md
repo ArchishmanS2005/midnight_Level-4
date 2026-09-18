@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml/badge.svg)](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml)
 [![Midnight Network](https://img.shields.io/badge/Network-Midnight%20Preview-a855f7)](https://midnight.network)
+[![X Profile](https://img.shields.io/badge/X-AgentPassport05-1DA1F2?logo=x&logoColor=white)](https://x.com/AgentPassport05)
 [![License](https://img.shields.io/badge/License-MIT-06b6d4)](./LICENSE)
 [![Node](https://img.shields.io/badge/Node-v22%2B-22c55e)](https://nodejs.org)
 
@@ -221,7 +222,7 @@ For a complete step-by-step guide including setup, wallet connection, and troubl
 
 ## Product X Profile
 
-> **[PLACEHOLDER — I will add the X (Twitter) profile link after creating the account]**
+🌐 **[@AgentPassport05 on X (Twitter)](https://x.com/AgentPassport05)** — Follow for updates on privacy-preserving AI agent authorization on Midnight Network.
 
 ---
 
