@@ -22,7 +22,7 @@
 
 | Network | Address |
 |---------|---------|
-| Midnight Preview | `PENDING_DEPLOYMENT — paste after running Step 5 deploy command` |
+| Midnight Preview | `4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4` |
 
 > See [Step 5](#step-5-deploy) below for the exact deploy command.
 

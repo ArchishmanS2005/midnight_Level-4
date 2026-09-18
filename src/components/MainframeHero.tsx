@@ -78,7 +78,7 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
   // Handle address copy
   const handleCopyAddress = (e: React.MouseEvent) => {
     e.stopPropagation()
-    const addr = contractAddress || 'PENDING_DEPLOYMENT'
+    const addr = contractAddress || '4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4'
     navigator.clipboard.writeText(addr)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -199,7 +199,7 @@ export default function MainframeHero({ onActionClick, contractAddress }: Mainfr
               <span>
                 Midnight Preview:{' '}
                 <span className="underline underline-offset-1 font-mono">
-                  {contractAddress && contractAddress !== 'PENDING_DEPLOYMENT' ? `${contractAddress.slice(0, 10)}...` : 'Contract Active'}
+                  {contractAddress ? `${contractAddress.slice(0, 10)}...` : 'Contract Active'}
                 </span>
               </span>
               <svg

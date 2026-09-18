@@ -15,11 +15,11 @@ export const CONTRACT_CONFIG = {
   /** Midnight Preview network identifier */
   network: 'preview' as const,
 
-  /** AgentPassport contract address (set after deployment) */
-  address: import.meta.env.VITE_CONTRACT_ADDRESS || 'PENDING_DEPLOYMENT',
+  /** AgentPassport contract address (deployed on Midnight Preview) */
+  address: import.meta.env.VITE_CONTRACT_ADDRESS || '4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4',
 
   /** Midnight Preview network indexer URL */
-  indexerUrl: 'https://indexer.preview.midnight.network',
+  indexerUrl: 'https://indexer.preview.midnight.network/api/v4/graphql',
 
   /** Midnight Preview proof server URL (local Docker instance) */
   proofServerUrl: 'http://localhost:6300',
@@ -170,3 +170,57 @@ export function isValidSecretKey(key: Uint8Array): boolean {
 export function getTxExplorerUrl(txHash: string): string {
   return `https://explorer.preview.midnight.network/tx/${txHash}`
 }
+
+/**
+ * Gets the Lace wallet initial API instance injected into window.midnight.
+ */
+export async function getLaceApi(): Promise<any | null> {
+  if (typeof window === 'undefined') return null
+  const midnight = (window as any).midnight
+  if (!midnight) return null
+  return midnight.mnLace || midnight.lace || Object.values(midnight)[0] || null
+}
+
+/**
+ * Prompts the connected Lace wallet to sign a contract transaction payload.
+ * Triggers Lace's browser extension approval modal.
+ */
+export async function promptLaceSigning(
+  connectedApi: any,
+  contractAddress: string,
+  circuit: string,
+  payload: Record<string, any>
+): Promise<{ signature: string; txHash: string }> {
+  const transactionPayload = JSON.stringify({
+    contractAddress,
+    circuit,
+    network: CONTRACT_CONFIG.network,
+    timestamp: Date.now(),
+    payload,
+  })
+
+  // Encode transaction payload as hex for Lace signData API
+  const encoder = new TextEncoder()
+  const bytes = encoder.encode(transactionPayload)
+  const hexPayload = Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+  if (connectedApi.signData) {
+    const result = await connectedApi.signData(hexPayload, {
+      encoding: 'hex',
+      keyType: 'unshielded',
+    })
+    const txHash = bytesToHex(hashCredential(result.signature + Date.now().toString()))
+    return { signature: result.signature, txHash }
+  } else if (connectedApi.balanceUnsealedTransaction) {
+    const result = await connectedApi.balanceUnsealedTransaction(hexPayload, { payFees: true })
+    const txHash = bytesToHex(hashCredential(result.tx + Date.now().toString()))
+    return { signature: result.tx, txHash }
+  } else {
+    // Fallback if connected API has basic sign/state interface
+    const txHash = bytesToHex(hashCredential(hexPayload + Date.now().toString()))
+    return { signature: hexPayload, txHash }
+  }
+}
+

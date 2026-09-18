@@ -397,18 +397,12 @@ export default function AgentAuthorization({
 
               {proof.txHash && (
                 <div className="mt-3 p-2.5 rounded-lg bg-black/60 border border-white/10 flex items-center gap-2">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 opacity-60">
+                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  <a
-                    href={getTxExplorerUrl(proof.txHash)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-mono underline hover:text-white truncate"
-                  >
-                    Tx Hash: {truncate(proof.txHash, 16, 8)}
-                  </a>
+                  <span className="text-xs font-mono opacity-80 truncate">
+                    Local reference ID: {truncate(proof.txHash, 16, 8)}
+                  </span>
                 </div>
               )}
             </div>
@@ -517,7 +511,7 @@ function getProofStatusLabel(status: ProofState['status']): string {
     case 'submitting':
       return '📡 Submitting to Midnight Preview'
     case 'verified':
-      return '✅ ZK Proof Verified On-Chain'
+      return '✅ ZK Proof Verified (Local Simulation)'
     case 'rejected':
       return '❌ Authorization Rejected'
     case 'error':

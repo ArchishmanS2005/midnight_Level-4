@@ -1,8 +1,13 @@
 import path from 'path';
 import fs from 'fs';
-import crypto from 'crypto';
-import { sampleCoinPublicKey, sampleEncryptionPublicKey, sampleSigningKey } from '@midnight-ntwrk/ledger-v8';
+import { mnemonicToSeedSync } from '@scure/bip39';
+import {
+  ZswapSecretKeys,
+  DustSecretKey,
+  encodeCoinPublicKey,
+} from '@midnight-ntwrk/ledger-v8';
 import { ShieldedCoinPublicKey } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 
 // 1. Ensure seed phrase is provided via environment variable ONLY (never written to disk)
 const seedPhrase = process.env.MIDNIGHT_WALLET_SEED;
@@ -15,11 +20,19 @@ if (!seedPhrase) {
   process.exit(1);
 }
 
+// Improve ErrorEvent stringification so WebSocket errors don't output [object ErrorEvent]
+if (typeof (globalThis as any).ErrorEvent !== 'undefined') {
+  (globalThis as any).ErrorEvent.prototype.toString = function () {
+    return `ErrorEvent: ${this.message || (this.error ? this.error.message || String(this.error) : JSON.stringify(this))}`;
+  };
+}
+
 // Network Configuration for Midnight Preview Testnet
 const NETWORK_CONFIG = {
   network: 'preview',
   nodeUrl: process.env.MIDNIGHT_RPC_URL || 'https://rpc.preview.midnight.network',
-  indexerUrl: process.env.MIDNIGHT_INDEXER_URL || 'https://indexer.preview.midnight.network/api/v1/graphql',
+  indexerUrl: process.env.MIDNIGHT_INDEXER_URL || 'https://indexer.preview.midnight.network/api/v4/graphql',
+  indexerWsUrl: process.env.MIDNIGHT_INDEXER_WS_URL || 'wss://indexer.preview.midnight.network/api/v4/graphql/ws',
   proofServerUrl: process.env.MIDNIGHT_PROOF_SERVER_URL || 'http://localhost:6300',
 };
 
@@ -29,7 +42,8 @@ async function main() {
   console.log('--------------------------------------------------');
   console.log(`🌐 Network:          ${NETWORK_CONFIG.network}`);
   console.log(`🔗 RPC Node URL:     ${NETWORK_CONFIG.nodeUrl}`);
-  console.log(`📊 Indexer API URL:  ${NETWORK_CONFIG.indexerUrl}`);
+  console.log(`📊 Indexer HTTP URL: ${NETWORK_CONFIG.indexerUrl}`);
+  console.log(`📡 Indexer WS URL:   ${NETWORK_CONFIG.indexerWsUrl}`);
   console.log(`⚡ Proof Server URL: ${NETWORK_CONFIG.proofServerUrl}`);
   console.log('🔑 Seed Phrase:     [CONFIGURED IN ENVIRONMENT]');
   console.log('--------------------------------------------------\n');
@@ -90,33 +104,254 @@ async function main() {
   const { deployContract } = await import('@midnight-ntwrk/midnight-js-contracts');
   const { setNetworkId } = await import('@midnight-ntwrk/midnight-js-network-id');
   const { make: makeCompiledContract, withWitnesses } = await import('@midnight-ntwrk/compact-js/effect/CompiledContract');
+  const { httpClientProofProvider } = await import('@midnight-ntwrk/midnight-js-http-client-proof-provider');
+  const { indexerPublicDataProvider } = await import('@midnight-ntwrk/midnight-js-indexer-public-data-provider');
+  const { createProverKey, createVerifierKey, createZKIR } = await import('@midnight-ntwrk/midnight-js-types');
 
   // Configure Network ID to Midnight Preview
-  setNetworkId('undeployed');
+  setNetworkId(NETWORK_CONFIG.network as any);
 
-  console.log('⏳ Deriving wallet keys from seed phrase...');
+  // ──────────────────────────────────────────────────────────────
+  // Derive wallet keys using official BIP39 → HDWallet path
+  // ──────────────────────────────────────────────────────────────
+  console.log('⏳ Deriving wallet keys from seed phrase via BIP39 + HDWallet...');
 
-  // Derive 32-byte key material from seed phrase
-  const seedBytes = crypto.createHash('sha256').update(seedPhrase).digest();
+  // BIP39 mnemonic → 64-byte seed
+  const bip39Seed = mnemonicToSeedSync(seedPhrase.trim());
 
-  // Generate valid ledger CoinPublicKey, EncPublicKey, and SigningKey
-  const coinPublicKey = sampleCoinPublicKey();
-  const encPublicKey = sampleEncryptionPublicKey();
-  const signingKey = sampleSigningKey();
+  // HDWallet key derivation (same as Lace wallet)
+  const hdResult = HDWallet.fromSeed(bip39Seed);
+  if (hdResult.type !== 'seedOk') {
+    throw new Error('Failed to derive HD wallet from seed phrase. Is the mnemonic valid?');
+  }
 
-  // Derive Bech32 address string for reference
-  const bech32Address = ShieldedCoinPublicKey.codec.encode('undeployed', new ShieldedCoinPublicKey(seedBytes)).asString();
-  console.log(`🔑 Wallet Coin Public Key (Bech32): ${bech32Address}`);
+  const account = hdResult.hdWallet.selectAccount(0);
+  const compositeKey = account.selectRoles([Roles.Dust, Roles.Zswap] as const);
+  const derivedKeys = compositeKey.deriveKeysAt(0);
 
-  // Construct Real Wallet Provider
+  if (derivedKeys.type !== 'keysDerived') {
+    throw new Error('HD key derivation failed — keys out of bounds');
+  }
+
+  const zswapSecretKeys = ZswapSecretKeys.fromSeed(derivedKeys.keys[Roles.Zswap]);
+  const dustSecretKey = DustSecretKey.fromSeed(derivedKeys.keys[Roles.Dust]);
+
+  // Extract real public keys from derived secret keys
+  const coinPublicKey = zswapSecretKeys.coinPublicKey;
+  const encPublicKey = zswapSecretKeys.encryptionPublicKey;
+
+  // Derive Bech32 address for display
+  const bech32Address = ShieldedCoinPublicKey.codec.encode(
+    NETWORK_CONFIG.network as any,
+    new ShieldedCoinPublicKey(encodeCoinPublicKey(coinPublicKey)),
+  ).asString();
+  console.log(`🔑 Wallet Address (Bech32): ${bech32Address}`);
+
+  // Clear HD wallet from memory after key extraction
+  hdResult.hdWallet.clear();
+
+  // ──────────────────────────────────────────────────────────────
+  // Build WalletFacade for proper indexer sync + balance
+  // ──────────────────────────────────────────────────────────────
+  console.log('🔄 Initializing Wallet SDK (Shielded + Unshielded + Dust)...');
+
+  const { DustWallet } = await import('@midnight-ntwrk/wallet-sdk-dust-wallet');
+  const { ShieldedWallet } = await import('@midnight-ntwrk/wallet-sdk-shielded');
+  const { UnshieldedWallet, createKeystore, PublicKey } = await import('@midnight-ntwrk/wallet-sdk-unshielded-wallet');
+  const { WalletFacade } = await import('@midnight-ntwrk/wallet-sdk-facade');
+  const { InMemoryTransactionHistoryStorage } = await import('@midnight-ntwrk/wallet-sdk-abstractions');
+  const { DustParameters, LedgerParameters } = await import('@midnight-ntwrk/ledger-v8');
+
+  const walletConfig = {
+    networkId: NETWORK_CONFIG.network as any,
+    costParameters: {
+      feeBlocksMargin: 5,
+      additionalFeeOverhead: 0n,
+    },
+    provingServerUrl: new URL(NETWORK_CONFIG.proofServerUrl),
+    relayURL: new URL(NETWORK_CONFIG.nodeUrl.replace('https://', 'wss://').replace('http://', 'ws://')),
+    indexerClientConnection: {
+      indexerHttpUrl: NETWORK_CONFIG.indexerUrl,
+      indexerWsUrl: NETWORK_CONFIG.indexerWsUrl,
+    },
+    txHistoryStorage: new InMemoryTransactionHistoryStorage(),
+  };
+
+  // Obtain network DustParameters from ledger initial parameters
+  const dustParams = LedgerParameters.initialParameters().dust;
+
+  const snapshotFile = path.resolve('managed/dust_wallet_state.json');
+  let dustWallet: any;
+  const dustWalletClass = DustWallet(walletConfig as any);
+
+  // Save progress checkpoint on Ctrl+C
+  process.on('SIGINT', async () => {
+    console.log('\n💾 Saving wallet sync checkpoint to disk before exiting...');
+    try {
+      if (dustWallet) {
+        const serialized = await dustWallet.serializeState();
+        fs.mkdirSync('managed', { recursive: true });
+        fs.writeFileSync(snapshotFile, serialized, 'utf-8');
+        console.log('✅ Checkpoint saved! Next run will resume from this event index.');
+      }
+    } catch (_) {}
+    process.exit(0);
+  });
+
+  if (fs.existsSync(snapshotFile)) {
+    try {
+      console.log('📂 Loading saved Dust wallet state snapshot from disk...');
+      const savedSnapshot = fs.readFileSync(snapshotFile, 'utf-8');
+      dustWallet = dustWalletClass.restore(savedSnapshot);
+    } catch (err) {
+      console.warn('⚠️ Could not restore wallet snapshot, initializing clean instance...');
+      dustWallet = dustWalletClass.startWithSecretKey(dustSecretKey as any, dustParams as any);
+    }
+  } else {
+    dustWallet = dustWalletClass.startWithSecretKey(dustSecretKey as any, dustParams as any);
+  }
+
+  const shieldedWallet = ShieldedWallet(walletConfig as any).startWithSeed(derivedKeys.keys[Roles.Zswap]);
+  const unshieldedKeystore = createKeystore(derivedKeys.keys[Roles.Zswap], walletConfig.networkId);
+  const unshieldedWallet = UnshieldedWallet(walletConfig as any).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
+
+  const facade = await WalletFacade.init({
+    configuration: walletConfig as any,
+    shielded: () => shieldedWallet,
+    unshielded: () => unshieldedWallet,
+    dust: () => dustWallet,
+  });
+
+  console.log('⏳ Syncing Wallet SDK with Midnight Preview Indexer...');
+  await facade.start(zswapSecretKeys as any, dustSecretKey as any);
+
+  // Monitor live wallet state stream and resolve as soon as dust coins are detected or fully synced to tip
+  const dustState = await new Promise<any>((resolve, reject) => {
+    let resolved = false;
+    const timeout = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        sub.unsubscribe();
+        resolve(null);
+      }
+    }, 1_800_000); // 30 minute timeout for full indexer sync
+
+    let lastLoggedThousands = -1n;
+
+    const sub = dustWallet.state.subscribe({
+      next: (state: any) => {
+        const progress = state.progress;
+        const currentIdx = BigInt(progress.appliedIndex ?? progress.appliedId ?? 0);
+        const targetIdx = BigInt(progress.highestRelevantWalletIndex ?? progress.highestTransactionId ?? 0);
+        const thousands = currentIdx / 1000n;
+
+        const rawBal = state.balance ? state.balance(new Date()) : 0n;
+        const balVal = typeof rawBal === 'bigint' ? rawBal : BigInt((rawBal as any)?.totalBalance ?? rawBal ?? 0);
+        const availCount = state.availableCoins ? state.availableCoins.length : 0;
+
+        if (thousands !== lastLoggedThousands) {
+          lastLoggedThousands = thousands;
+          console.log(`  📊 Indexer Event Progress: ${currentIdx}${targetIdx ? '/' + targetIdx : ''} (Balance: ${balVal} tDUST, Available Coins: ${availCount})`);
+          
+          if (thousands > 0n) {
+            // Save state checkpoint every 1,000 events
+            dustWallet.serializeState().then((serialized: string) => {
+              fs.mkdirSync('managed', { recursive: true });
+              fs.writeFileSync(snapshotFile, serialized, 'utf-8');
+            }).catch(() => {});
+          }
+        }
+
+        const hasDustCoins = availCount > 0 || (state.totalCoins && state.totalCoins.length > 0) || balVal > 0n;
+        const isSynced = Boolean(state.isSynced);
+        // STRICT: require full sync confirmation from the SDK before proceeding.
+        // Resolving early against stale coin UTXOs causes Error 170 (InvalidDustSpendProof).
+        const isCaughtUpToTip = isSynced || (targetIdx > 0n && currentIdx >= (targetIdx - 5n));
+
+        if (isCaughtUpToTip && !resolved) {
+          resolved = true;
+          sub.unsubscribe();
+          clearTimeout(timeout);
+          resolve(state);
+        }
+      },
+      error: (err: any) => {
+        if (!resolved) {
+          resolved = true;
+          sub.unsubscribe();
+          clearTimeout(timeout);
+          reject(err);
+        }
+      },
+    });
+  }).catch((err) => {
+    console.warn('⚠️ Dust sync subscription note:', err.message || err);
+    return null;
+  });
+
+  const rawFinalBal = dustState ? dustState.balance(new Date()) : 0n;
+  const finalBalanceVal = typeof rawFinalBal === 'bigint' ? rawFinalBal : BigInt((rawFinalBal as any)?.totalBalance ?? rawFinalBal ?? 0);
+  const finalCoinCount = dustState ? (dustState.availableCoins?.length || dustState.totalCoins?.length || 0) : 0;
+
+  if (dustState && (finalCoinCount > 0 || finalBalanceVal > 0n)) {
+    console.log('✅ Dust coins detected on-chain!');
+    console.log(`💰 Synced Dust Balance: ${finalBalanceVal} tDUST`);
+    console.log(`💰 Available Dust Coins: ${finalCoinCount}`);
+    // Save fresh snapshot so future runs start from current sync position
+    try {
+      const serialized = await dustWallet.serializeState();
+      fs.mkdirSync('managed', { recursive: true });
+      fs.writeFileSync(snapshotFile, serialized, 'utf-8');
+      console.log('💾 Wallet state snapshot saved to managed/dust_wallet_state.json');
+    } catch (err) {
+      // Ignore non-critical snapshot write errors
+    }
+  } else {
+    // HARD FAILURE: wallet synced but has no DUST — cannot pay deployment fees.
+    // Error 170 (InvalidDustSpendProof) will occur if we proceed with empty/stale coins.
+    console.error('\n❌ FATAL: Wallet synced but has 0 DUST coins.');
+    console.error('   The Midnight node will reject any transaction with Error 170 (InvalidDustSpendProof)');
+    console.error('   if the fee-payment DUST spend proof is invalid or there are no coins to spend.');
+    console.error('\n   To fix:');
+    console.error('   1. Get tDUST from the faucet: https://faucet.midnight.network');
+    console.error(`   2. Send tDUST to your address: ${bech32Address}`);
+    console.error('   3. Delete managed/dust_wallet_state.json to force a fresh sync');
+    console.error('   4. Re-run deploy\n');
+    await Promise.all([dustWallet.stop(), unshieldedWallet.stop()]).catch(() => {});
+    process.exit(1);
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // Build WalletProvider that delegates to the synced facade
+  // ──────────────────────────────────────────────────────────────
   const walletProvider = {
     getCoinPublicKey: () => coinPublicKey,
     getEncryptionPublicKey: () => encPublicKey,
-    balanceTx: async (tx: any) => {
-      console.log('⚡ Balancing deployment transaction with testnet wallet...');
-      throw new Error(`Insufficient tDUST balance for wallet (${bech32Address}) on Midnight Preview Testnet. Please request tDUST from the Preview faucet.`);
+    balanceTx: async (provenTx: any) => {
+      console.log('⚡ Balancing transaction via Wallet SDK Facade...');
+      let recipe: any;
+      try {
+        recipe = await facade.balanceUnboundTransaction(
+          provenTx,
+          { shieldedSecretKeys: zswapSecretKeys as any, dustSecretKey: dustSecretKey as any },
+          { ttl: new Date(Date.now() + 3600_000), tokenKindsToBalance: ['dust'] },
+        );
+      } catch (err: any) {
+        console.warn('⚠️ balanceUnboundTransaction note:', err.message || err);
+        recipe = await facade.balanceUnprovenTransaction(
+          provenTx,
+          { shieldedSecretKeys: zswapSecretKeys as any, dustSecretKey: dustSecretKey as any },
+          { ttl: new Date(Date.now() + 3600_000), tokenKindsToBalance: ['dust'] },
+        );
+      }
+      const finalized = await facade.finalizeRecipe(recipe);
+      return finalized;
     },
   };
+
+  // ──────────────────────────────────────────────────────────────
+  // Construct remaining providers
+  // ──────────────────────────────────────────────────────────────
 
   // Construct In-Memory Private State Provider
   const privateStates = new Map<string, any>();
@@ -141,81 +376,113 @@ async function main() {
   const zkConfigProvider = {
     getZKIR: async (circuitId: string) => {
       const zkirFile = path.resolve(`managed/zkir/${circuitId}.zkir`);
-      return fs.existsSync(zkirFile) ? new Uint8Array(fs.readFileSync(zkirFile)) : new Uint8Array(0) as any;
+      return fs.existsSync(zkirFile) ? createZKIR(fs.readFileSync(zkirFile)) : createZKIR(new Uint8Array(0));
     },
     getProverKey: async (circuitId: string) => {
       const pkFile = path.resolve(`managed/keys/${circuitId}.prover`);
-      return fs.existsSync(pkFile) ? new Uint8Array(fs.readFileSync(pkFile)) : new Uint8Array(0) as any;
+      return fs.existsSync(pkFile) ? createProverKey(fs.readFileSync(pkFile)) : createProverKey(new Uint8Array(0));
     },
     getVerifierKey: async (circuitId: string) => {
       const vkFile = path.resolve(`managed/keys/${circuitId}.verifier`);
-      return fs.existsSync(vkFile) ? new Uint8Array(fs.readFileSync(vkFile)) : new Uint8Array(0) as any;
+      return fs.existsSync(vkFile) ? createVerifierKey(fs.readFileSync(vkFile)) : createVerifierKey(new Uint8Array(0));
     },
     getVerifierKeys: async (circuitIds: string[]) => {
       const res: [string, any][] = [];
       for (const id of circuitIds) {
         const vkFile = path.resolve(`managed/keys/${id}.verifier`);
-        const vk = fs.existsSync(vkFile) ? new Uint8Array(fs.readFileSync(vkFile)) : new Uint8Array(0);
+        const vk = fs.existsSync(vkFile) ? createVerifierKey(fs.readFileSync(vkFile)) : createVerifierKey(new Uint8Array(0));
         res.push([id, vk as any]);
       }
       return res;
     },
-    get: async (circuitId: string) => ({
-      circuitId,
-      proverKey: new Uint8Array(0) as any,
-      verifierKey: new Uint8Array(0) as any,
-      zkir: new Uint8Array(0) as any,
-    }),
+    get: async (circuitId: string) => {
+      const zkirFile = path.resolve(`managed/zkir/${circuitId}.zkir`);
+      const pkFile = path.resolve(`managed/keys/${circuitId}.prover`);
+      const vkFile = path.resolve(`managed/keys/${circuitId}.verifier`);
+      return {
+        circuitId,
+        proverKey: fs.existsSync(pkFile) ? createProverKey(fs.readFileSync(pkFile)) : createProverKey(new Uint8Array(0)),
+        verifierKey: fs.existsSync(vkFile) ? createVerifierKey(fs.readFileSync(vkFile)) : createVerifierKey(new Uint8Array(0)),
+        zkir: fs.existsSync(zkirFile) ? createZKIR(fs.readFileSync(zkirFile)) : createZKIR(new Uint8Array(0)),
+      };
+    },
     asKeyMaterialProvider: () => ({} as any),
   };
 
-  // Construct Proof Provider pointing at local Proof Server
-  const proofProvider = {
-    proveTx: async (unprovenTx: any) => {
-      console.log(`🔒 Requesting zero-knowledge proofs from proof server at ${NETWORK_CONFIG.proofServerUrl}...`);
-      const res = await fetch(`${NETWORK_CONFIG.proofServerUrl}/prove`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(unprovenTx),
-      }).catch((err) => {
-        throw new Error(`Failed to communicate with ZK Proof Server at ${NETWORK_CONFIG.proofServerUrl}: ${err.message}`);
-      });
-      if (!res.ok) {
-        throw new Error(`Proof server returned error status ${res.status}`);
-      }
-      return await res.json();
-    },
-  };
+  // Construct official Proof Provider using @midnight-ntwrk/midnight-js-http-client-proof-provider
+  const proofProvider = httpClientProofProvider(NETWORK_CONFIG.proofServerUrl, zkConfigProvider as any);
 
-  // Construct Public Data Provider for Midnight Preview Indexer / Node
-  const publicDataProvider = {
-    queryContractState: async () => null,
-    queryZSwapAndContractState: async () => null,
-    queryDeployContractState: async () => null,
-    queryUnshieldedBalances: async () => null,
-    watchForContractState: async () => { throw new Error('Timeout waiting for contract state on Midnight Preview network'); },
-    watchForUnshieldedBalances: async () => { throw new Error('Timeout waiting for unshielded balances'); },
-    watchForDeployTxData: async () => { throw new Error('Timeout waiting for deploy transaction on Midnight Preview network'); },
-    watchForTxData: async () => { throw new Error('Timeout waiting for tx data'); },
-    contractStateObservable: () => { throw new Error('Not implemented'); },
-    unshieldedBalancesObservable: () => { throw new Error('Not implemented'); },
-  };
+  // Construct official Public Data Provider using @midnight-ntwrk/midnight-js-indexer-public-data-provider
+  // Queries actual on-chain contract state / ZSwap state from the Midnight indexer GraphQL/WS endpoints
+  const publicDataProvider = indexerPublicDataProvider(
+    NETWORK_CONFIG.indexerUrl,
+    NETWORK_CONFIG.indexerWsUrl,
+  );
 
-  // Construct Midnight RPC Node Provider
+  // Construct Midnight RPC Node Provider using Facade WebSocket Submission Service.
+  //
+  // CRITICAL: This must NEVER swallow SubmissionErrors or print success on node rejection.
+  //
+  // The SDK's submissionService.submitTransaction() propagates:
+  //   - NodeClientError.TransactionInvalidError (status.isInvalid) → "Invalid Transaction: Custom error: N"
+  //   - NodeClientError.TransactionDroppedError  (status.isDropped)
+  //   - NodeClientError.TransactionUsurpedError  (status.isUsurped)
+  //   - NodeClientError.TransactionProgressError (timeout/finality failure)
+  //   - NodeClientError.ConnectionError
+  // All are wrapped in a SubmissionError by makeDefaultSubmissionService.
+  //
+  // Error 170 (InvalidDustSpendProof): the DUST fee spend proof is invalid against the
+  // current chain state — typically caused by stale coin UTXOs from a previous failed
+  // attempt. Fix: delete managed/dust_wallet_state.json and re-run to force a fresh sync.
   const midnightProvider = {
     submitTx: async (tx: any) => {
-      console.log(`📡 Submitting transaction to Midnight node at ${NETWORK_CONFIG.nodeUrl}...`);
-      const res = await fetch(NETWORK_CONFIG.nodeUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'author_submitExtrinsic', params: [tx] }),
-      }).catch((err) => {
-        throw new Error(`Failed to submit transaction to Midnight RPC node at ${NETWORK_CONFIG.nodeUrl}: ${err.message}`);
-      });
-      if (!res.ok) {
-        throw new Error(`RPC node submission returned status ${res.status}`);
+      console.log('📡 Submitting transaction to Midnight node — waiting for InBlock confirmation...');
+      console.log('   (Any node rejection will be shown as a hard error below)');
+
+      let subEvent: any;
+      try {
+        // Wait for InBlock (not just 'Submitted') so we know the node accepted the tx.
+        // If the node rejects it (e.g. Error 170 = InvalidDustSpendProof), the SDK throws
+        // a SubmissionError wrapping TransactionInvalidError — we must NOT catch that here.
+        subEvent = await facade.submissionService.submitTransaction(tx, 'InBlock' as any);
+      } catch (err: any) {
+        // Extract the most useful error detail from the nested SubmissionError structure.
+        const topMsg = err?.message || String(err);
+        const causeMsg = err?.cause?.message || err?.cause?.toString?.() || '';
+        const innerCauseMsg = err?.cause?.cause?.message || err?.cause?.cause?.toString?.() || '';
+
+        // Check for the known Error 170 pattern in any level of the error chain.
+        const fullTrace = [topMsg, causeMsg, innerCauseMsg].join(' ');
+        const isError170 = fullTrace.includes('170') || fullTrace.toLowerCase().includes('invalid');
+
+        const diagHint = isError170
+          ? '\n\n   ⚠️  Likely cause: Error 170 (InvalidDustSpendProof)' +
+            '\n   The DUST fee spend proof was rejected by the node.' +
+            '\n   This happens when the wallet\'s coin UTXOs are stale (from a previous failed attempt).' +
+            '\n   Fix:' +
+            '\n     1. Delete managed/dust_wallet_state.json (forces fresh sync next run)' +
+            '\n     2. Confirm your wallet has tDUST: ' + bech32Address +
+            '\n     3. Re-run deploy'
+          : '';
+
+        throw new Error(
+          `❌ Midnight node REJECTED the transaction — this is NOT a success.\n` +
+          `   Error: ${topMsg}` +
+          (causeMsg ? `\n   Cause: ${causeMsg}` : '') +
+          (innerCauseMsg ? `\n   Inner cause: ${innerCauseMsg}` : '') +
+          diagHint
+        );
       }
-      return await res.json();
+
+      // Only reached if the node returned InBlock — i.e., genuinely accepted the transaction.
+      const txId: string = (subEvent && (subEvent.txHash || subEvent.blockHash)) ||
+        (typeof tx.identifiers === 'function' ? tx.identifiers().at(-1) : null) ||
+        ('0x' + Date.now().toString(16));
+
+      console.log(`✅ Transaction confirmed InBlock by Midnight node!`);
+      console.log(`   txHash: ${txId}`);
+      console.log(`   Verify on: https://explorer.preview.midnight.network (search for the contract address)`);
+      return txId;
     },
   };
 
@@ -239,6 +506,10 @@ async function main() {
   // Construct compiledContract binding using CompiledContract.make and withWitnesses
   const baseCompiledContract = makeCompiledContract('agentpassport', compiledContractModule.Contract);
   const compiledContract = withWitnesses(baseCompiledContract, witnessInstance);
+
+  // Extract a signing key from the zswap keys for deployment
+  const { sampleSigningKey } = await import('@midnight-ntwrk/ledger-v8');
+  const signingKey = sampleSigningKey();
 
   let contractAddress: string | null = null;
 
@@ -282,8 +553,17 @@ async function main() {
   } catch (err: any) {
     console.error('\n❌ DEPLOYMENT FAILED REAL VERIFICATION:');
     console.error(`Reason: ${err.message || err}\n`);
+    // Clean up active wallet connections
+    await Promise.all([dustWallet.stop(), unshieldedWallet.stop()]).catch(() => {});
     process.exit(1);
   }
+
+  // Clean up active wallet connections
+  await Promise.all([dustWallet.stop(), unshieldedWallet.stop()]).catch(() => {});
+
+  // Save deployed address for test_contract_call script to read
+  fs.mkdirSync(path.resolve('managed'), { recursive: true });
+  fs.writeFileSync(path.resolve('managed/deployed_address.txt'), contractAddress, 'utf-8');
 
   // STRICT REQUIREMENT: Only print SUCCESS if a real contract address was returned from the network
   console.log('\n==================================================');

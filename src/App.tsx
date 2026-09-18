@@ -64,15 +64,34 @@ export default function App() {
               Cryptographic permissions for autonomous AI agents on Midnight Network. Execute private transactions with zero-knowledge proofs without exposing secrets.
             </p>
 
-            {/* Contract Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-neutral-900/90 border border-white/15 text-xs font-mono">
-              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              <span className="text-neutral-400">Contract Address:</span>
-              <span className="text-white font-medium">
-                {CONTRACT_CONFIG.address === 'PENDING_DEPLOYMENT'
-                  ? 'Awaiting deployment to Preview'
-                  : CONTRACT_CONFIG.address}
-              </span>
+            {/* Permanent Verified Contract Deployment Banner */}
+            <div className="max-w-3xl mx-auto mb-6 p-4 rounded-xl bg-neutral-900/90 border border-emerald-500/40 text-left backdrop-blur-md shadow-xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                  <div>
+                    <div className="text-xs font-heading font-semibold uppercase tracking-wider text-emerald-400">
+                      Real Verified Contract Deployment (Midnight Preview Network)
+                    </div>
+                    <div className="text-xs font-mono text-neutral-200 break-all mt-0.5">
+                      {CONTRACT_CONFIG.address}
+                    </div>
+                  </div>
+                </div>
+                <a
+                  href={`https://explorer.preview.midnight.network/contracts/${CONTRACT_CONFIG.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-xs font-mono text-emerald-300 transition-colors"
+                >
+                  View Contract on Explorer
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
 
