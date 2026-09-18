@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ProofState, ContractStats } from '../hooks/useMidnight'
-import { generateSecretKey, bytesToHex, hashCredential, getTxExplorerUrl, truncate } from '../utils/contract'
+import { generateSecretKey, bytesToHex, hashCredential, truncate } from '../utils/contract'
 
 type ActionTab = 'register' | 'authorize' | 'revoke'
 
