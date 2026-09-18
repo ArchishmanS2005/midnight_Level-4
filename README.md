@@ -14,15 +14,15 @@
 
 ## Live Demo
 
-> **[PLACEHOLDER — I will paste the Preview demo URL after deploying the frontend]**
+🚀 **[https://midnight-level-4.vercel.app/](https://midnight-level-4.vercel.app/)**
 
 ---
 
-## Contract Address
+## Contract Verification & Deployment
 
-| Network | Address |
-|---------|---------|
-| Midnight Preview | `4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4` |
+| Network | Address | Explorer / Demo |
+|---------|---------|-----------------|
+| Midnight Preview | `4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4` | [Contract Explorer](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) \| [Live Demo](https://midnight-level-4.vercel.app/) |
 
 > See [Step 5](#step-5-deploy) below for the exact deploy command.
 
