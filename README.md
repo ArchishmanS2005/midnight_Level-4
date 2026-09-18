@@ -278,6 +278,14 @@ See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for complete CI pipel
 
 ---
 
+## 🛠️ Current Limitations & Engineering Notes
+
+- The core privacy-critical contract is genuinely deployed and verified on-chain on Midnight Preview (see [On-Chain Proof of Deployment](#-on-chain-proof-of-deployment) above).
+- Individual UI actions (*Register Agent*, *Authorize Action*, *Revoke Agent*) currently run as local proof simulations rather than submitting a fresh live transaction per click. This is due to a known SDK compatibility issue: `@midnight-ntwrk/compact-js` versions above 2.5.1 (required to fix a duplicate `onchain-runtime-v3` class-identity bug) depend on an unpublished/broken `@midnight-ntwrk/ledger-v9` alpha version at time of writing.
+- The underlying authorization logic, ZK circuit structure, and Midnight verification are fully implemented and match what's deployed on-chain — live per-action submission is the clear next integration step.
+
+---
+
 ## 📄 License
 
 Licensed under the [MIT License](./LICENSE) © 2025 Archishman Sarkar.
