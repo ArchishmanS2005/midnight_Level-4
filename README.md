@@ -13,19 +13,38 @@
 
 ---
 
-## Live Demo
+## Live Demo & Links
 
-🚀 **[https://midnight-level-4.vercel.app/](https://midnight-level-4.vercel.app/)**
+| Resource | Link |
+|----------|------|
+| 🌐 Live Demo | [midnight-level-4.vercel.app](https://midnight-level-4.vercel.app/) |
+| 💻 GitHub Repository | [github.com/ArchishmanS2005/midnight_Level-4](https://github.com/ArchishmanS2005/midnight_Level-4) |
+| 📋 CI/CD Pipeline | [GitHub Actions](https://github.com/ArchishmanS2005/midnight_Level-4/actions) |
+| 🐦 X Profile | [@AgentPassport05](https://x.com/AgentPassport05) |
+| 📄 Product Proposal | [PROPOSAL.md](./PROPOSAL.md) |
 
 ---
 
-## Contract Verification & Deployment
+## Contract Addresses & On-Chain Proof
 
-| Network | Address | Explorer / Demo |
-|---------|---------|-----------------|
-| Midnight Preview | `4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4` | [Contract Explorer](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) \| [Live Demo](https://midnight-level-4.vercel.app/) |
+| Network | Address | Status |
+|---------|---------|--------|
+| Midnight Preview | `4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4` | ✅ [Verified on Explorer](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) — Block 914,791, SUCCESS |
 
-> See [Step 5](#step-5-deploy) below for the exact deploy command.
+---
+
+## On-Chain Proof of Deployment
+
+| Metric / Parameter | Value |
+|-------------------|-------|
+| **Contract Address** | [`4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4`](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
+| **Network** | Midnight Preview |
+| **Action Type** | `ContractDeploy` |
+| **Transaction Status** | `SUCCESS` |
+| **Block Height** | `914,791` |
+| **Direct Explorer Link** | [explorer.preview.midnight.network/contracts/...](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
+
+> **Independent Verification**: Anyone can independently verify this deployment by opening the [Midnight Explorer Link](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) directly — this is not a claim, but publicly checkable data on Midnight's official block explorer.
 
 ---
 
