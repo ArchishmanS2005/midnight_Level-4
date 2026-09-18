@@ -1,131 +1,169 @@
 # AgentPassport
 
-[![CI](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml/badge.svg)](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml/badge.svg)](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml)
 [![Midnight Network](https://img.shields.io/badge/Network-Midnight%20Preview-a855f7)](https://midnight.network)
+[![Live Demo](https://img.shields.io/badge/Vercel-Live%20Demo-000000?logo=vercel&logoColor=white)](https://midnight-level-4.vercel.app/)
 [![X Profile](https://img.shields.io/badge/X-AgentPassport05-1DA1F2?logo=x&logoColor=white)](https://x.com/AgentPassport05)
 [![License](https://img.shields.io/badge/License-MIT-06b6d4)](./LICENSE)
 [![Node](https://img.shields.io/badge/Node-v22%2B-22c55e)](https://nodejs.org)
 
-> **The Privacy Layer for Autonomous AI Agents**
+> **The Zero-Knowledge Privacy Layer for Autonomous AI Agents**
 >
 > Give AI agents cryptographic permissions — not unrestricted access.
-> Prove authorization with Zero-Knowledge Proofs. Reveal nothing.
+> Prove authorization with Zero-Knowledge Proofs on Midnight Network. Reveal nothing.
+
+![AgentPassport Hero Interface](./docs/assets/01-landing-page.png)
 
 ---
 
-## Live Demo & Links
+## 🌐 Live Demo & Quick Links
 
-| Resource | Link |
-|----------|------|
-| 🌐 Live Demo | [midnight-level-4.vercel.app](https://midnight-level-4.vercel.app/) |
-| 💻 GitHub Repository | [github.com/ArchishmanS2005/midnight_Level-4](https://github.com/ArchishmanS2005/midnight_Level-4) |
-| 📋 CI/CD Pipeline | [GitHub Actions](https://github.com/ArchishmanS2005/midnight_Level-4/actions) |
-| 🐦 X Profile | [@AgentPassport05](https://x.com/AgentPassport05) |
-| 📄 Product Proposal | [PROPOSAL.md](./PROPOSAL.md) |
-
----
-
-## Contract Addresses & On-Chain Proof
-
-| Network | Address | Status |
-|---------|---------|--------|
-| Midnight Preview | `4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4` | ✅ [Verified on Explorer](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) — Block 914,791, SUCCESS |
+| Resource | Link | Description |
+|----------|------|-------------|
+| 🚀 **Live Demo** | [midnight-level-4.vercel.app](https://midnight-level-4.vercel.app/) | Production web application deployed on Vercel |
+| 💻 **GitHub Repository** | [github.com/ArchishmanS2005/midnight_Level-4](https://github.com/ArchishmanS2005/midnight_Level-4) | Source code & smart contract codebase |
+| 📋 **CI/CD Pipeline** | [GitHub Actions Workflow](https://github.com/ArchishmanS2005/midnight_Level-4/actions) | Automated build, unit tests & compilation pipeline |
+| 🐦 **X (Twitter) Profile** | [@AgentPassport05](https://x.com/AgentPassport05) | Project updates & ecosystem announcements |
+| 📄 **Product Proposal** | [PROPOSAL.md](./PROPOSAL.md) | Level 4 Midnight Builder Challenge submission proposal |
 
 ---
 
-## On-Chain Proof of Deployment
+## 📜 Contract Addresses & On-Chain Verification
 
-| Metric / Parameter | Value |
-|-------------------|-------|
+| Network | Contract Address | Deployment Status |
+|---------|------------------|-------------------|
+| **Midnight Preview** | [`4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4`](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) | ✅ **[Verified on Explorer](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4)** — Block `914,791`, `SUCCESS` |
+
+---
+
+## 🔍 On-Chain Proof of Deployment
+
+| Metric / Parameter | On-Chain Verified Value |
+|-------------------|-------------------------|
 | **Contract Address** | [`4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4`](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
-| **Network** | Midnight Preview |
+| **Network** | Midnight Preview Network |
 | **Action Type** | `ContractDeploy` |
 | **Transaction Status** | `SUCCESS` |
 | **Block Height** | `914,791` |
-| **Direct Explorer Link** | [explorer.preview.midnight.network/contracts/...](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
+| **Direct Explorer Link** | [explorer.preview.midnight.network/contracts/4ec57e9...](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
 
-> **Independent Verification**: Anyone can independently verify this deployment by opening the [Midnight Explorer Link](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) directly — this is not a claim, but publicly checkable data on Midnight's official block explorer.
+> [!IMPORTANT]
+> **Independent Verification**: Anyone can independently verify this deployment by opening the [Midnight Block Explorer](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) link — this is publicly checkable cryptographic data recorded on Midnight consensus nodes.
 
----
-
-## What This Product Does
-
-AI agents need access to budgets, credentials, and permissions to act autonomously. Today, users must choose between:
-
-1. **Giving full access** — catastrophic if the agent is compromised
-2. **Manual approval every time** — defeats the purpose of autonomy
-
-**AgentPassport solves this with Zero-Knowledge Proofs.**
-
-An AI agent can prove it is authorized to perform an action (e.g., "book a hotel for ≤200 tDUST") **without revealing**:
-- Its identity
-- Its actual budget
-- Its credentials
-- Its owner's personal policies
-
-The Midnight smart contract verifies the cryptographic proof. The chain sees only the result — not the inputs.
+![Midnight Explorer On-Chain Deployment Proof](./docs/assets/07-midnight-explorer-proof.jpg)
 
 ---
 
-## Privacy Model
+## 🖼️ Application Screenshots & User Workflow
 
-### What is PUBLIC (on-chain):
+### 1. Hero Landing Page & Autonomous Privacy Interface (A.R.I.A)
+![Hero Landing Page](./docs/assets/01-landing-page.png)
+
+### 2. AgentPassport Control Center & Verified Deployment Banner
+![Control Center](./docs/assets/02-control-center.png)
+
+### 3. Agent Registration & Local Credential Hashing
+![Agent Registration](./docs/assets/05-agent-registration.png)
+
+### 4. Agent Action Authorization & Budget Input
+![Authorize Action Form](./docs/assets/03-authorize-action.png)
+
+### 5. Zero-Knowledge Proof Verification Verdict
+![ZK Proof Verification Result](./docs/assets/04-proof-verification.png)
+
+### 6. Agent Revocation & Ownership Verification
+![Agent Revocation](./docs/assets/06-revoke-agent.png)
+
+### 7. Midnight Block Explorer Contract Deployment Proof
+![Midnight Explorer Proof](./docs/assets/07-midnight-explorer-proof.jpg)
+
+---
+
+## 💡 What This Product Does
+
+AI agents require budgets, credentials, and authorization rules to act autonomously on behalf of users. Currently, users face a dangerous dilemma:
+
+> [!CAUTION]
+> **1. Giving Full Key/Card Access**: Massive security vulnerability if the agent is compromised or exploited via prompt injection.
+> 
+> **2. Manual Approval Every Time**: Friction-heavy manual confirmation for every micro-action, defeating the purpose of autonomy.
+
+**AgentPassport solves this dilemma with Zero-Knowledge Proofs.**
+
+An AI agent can cryptographically prove it is authorized to perform an action (e.g., *"book a hotel room for ≤200 tDUST"*) **without revealing**:
+- Its secret key identity
+- Its maximum permission budget
+- Its credential contents
+- Its owner's underlying privacy policies
+
+The Midnight smart contract verifies the ZK proof. The ledger records only the verification status and public counters.
+
+---
+
+## 🔐 Zero-Knowledge Privacy Architecture
+
+```mermaid
+graph TD
+    A[🤖 Autonomous AI Agent Action Request] --> B[🔐 Local ZK Private Witness Generator]
+    B --> C[⚡ Compact ZK Circuit Execution]
+    C --> D[📄 Zero-Knowledge Proof Generation]
+    D --> E[📡 Midnight Network Consensus Node]
+    E --> F{Contract Verifies ZK Proof?}
+    F -- Yes --> G[✅ Action Authorized & Ledger Counters Incremented]
+    F -- No --> H[❌ Action Rejected & Rejection Counter Incremented]
+```
+
+### 🌐 What is PUBLIC (Recorded On-Chain)
 | Field | Type | Description |
 |-------|------|-------------|
-| `agent_count` | Counter | Total registered agents |
+| `agent_count` | Counter | Total registered active agents |
 | `total_authorizations` | Counter | Cumulative approved actions |
 | `total_rejections` | Counter | Cumulative denied actions |
 
-### What is PRIVATE (private witness, never on-chain):
+### 🔒 What is PRIVATE (Local Witness — Never Sent On-Chain)
 | Field | Type | Description |
 |-------|------|-------------|
-| `agent_secret_key` | `Bytes<32>` | Agent's private identity key |
+| `agent_secret_key` | `Bytes<32>` | Agent's 256-bit private identity key |
 | `permission_budget` | `Uint<64>` | Spending limit in tDUST |
-| `credential_hash` | `Bytes<32>` | Credential fingerprint |
+| `credential_hash` | `Bytes<32>` | Cryptographic credential fingerprint |
 
-### What the user PROVES without revealing:
-- `budget >= requested_amount` — without showing the budget
-- `agent_secret_key != 0` — agent exists, without revealing identity
-- `credential_hash != 0` — credentials are valid, without revealing them
-- Caller owns the agent — without exposing the secret key
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Smart Contract | [Midnight Compact](https://docs.midnight.network) |
-| ZK Proofs | Auto-generated by Compact compiler |
-| Network | Midnight Preview Network |
-| Wallet | [Lace](https://www.lace.io) (Midnight-compatible) |
-| Frontend | React 18 + Vite + TypeScript |
-| Styling | Tailwind CSS |
-| Tests | Jest + ts-jest (12 tests, all passing) |
-| CI/CD | GitHub Actions |
+### 🛡️ What the ZK Proof Asserts (Without Exposing Secrets)
+- `budget >= requested_amount` — Proves financial compliance without revealing budget
+- `agent_secret_key != 0` — Proves agent is valid without exposing secret identity
+- `credential_hash != 0` — Proves credential validity without revealing credentials
+- Caller ownership — Proves caller holds valid authorization secrets
 
 ---
 
-## Prerequisites
+## 🛠️ Technology Stack
 
-Before running AgentPassport locally, you need:
+| Layer | Technology | Function |
+|-------|-----------|----------|
+| **Smart Contract** | [Midnight Compact](https://docs.midnight.network) | On-chain state logic & ZK proof verification |
+| **ZK Circuits** | Auto-compiled Compact Circuits | Client-side zero-knowledge proof generation |
+| **Network** | Midnight Preview Network | Distributed privacy-preserving blockchain |
+| **Wallet** | [Lace Wallet](https://www.lace.io) (Midnight-compatible) | Browser extension wallet API & transaction signing |
+| **Frontend** | React 18 + Vite + TypeScript | Modern glassmorphic control center dashboard |
+| **Styling** | Vanilla CSS + Tailwind CSS | Responsive dark-mode UI design system |
+| **Testing** | Jest + `ts-jest` | 12/12 unit and contract integration tests passing |
+| **CI/CD** | GitHub Actions | Automated build, test, and type-check workflow |
+
+---
+
+## 📋 Prerequisites
+
+Before running AgentPassport locally, ensure you have:
 
 1. **[Lace Wallet](https://www.lace.io)** — Midnight-compatible browser extension
-   - Switch to **Midnight Preview** network in settings
-   - Get tDUST test tokens from the Preview faucet
-
-2. **[Node.js v22+](https://nodejs.org)** — `node --version` must show v22 or higher
-
-3. **[Docker](https://www.docker.com)** — required to run the local Proof Server
-   - The Proof Server handles ZK proof generation locally (your data never leaves your machine)
-
-4. **[Compact Compiler](https://docs.midnight.network)** — to compile `.compact` contracts
-   - Follow the official Midnight installation guide
-   - Verify: `compact --version`
+   - Switch network to **Midnight Preview** in wallet settings
+   - Request tDUST test tokens from the Preview faucet
+2. **[Node.js v22+](https://nodejs.org)** — Verify with `node --version` (must be >= v22)
+3. **[Docker](https://www.docker.com)** — Required to run the local Proof Server for client-side ZK proof generation
+4. **[Compact Compiler](https://docs.midnight.network)** — To compile `.compact` contract definitions (`compact --version`)
 
 ---
 
-## Setup & Run Locally
+## ⚡ Quickstart: Setup & Run Locally
 
 ```bash
 # 1. Clone the repository
@@ -135,13 +173,13 @@ cd midnight_Level-4
 # 2. Install dependencies
 npm install
 
-# 3. Start the local Proof Server (in a separate terminal)
+# 3. Start the local Midnight Proof Server (in a separate terminal)
 docker run -p 6300:6300 midnightntwrk/proof-server:latest
 
-# 4. Compile the Compact contract
+# 4. Compile the Compact contract definition
 compact compile contracts/agentpassport.compact --output managed
 
-# 5. Start the development server
+# 5. Launch the development server
 npm run dev
 ```
 
@@ -149,17 +187,17 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## Run Tests
+## 🧪 Unit & Integration Tests
 
 ```bash
-# Run all tests
+# Run full Jest test suite
 npm test
 
-# Run tests (CI mode — exits after completion)
+# Run CI non-interactive mode
 npm run test:ci
 ```
 
-**Test results:**
+### ✅ Test Results
 ```
 PASS tests/agentpassport.test.ts
   AgentPassport Contract
@@ -181,74 +219,69 @@ PASS tests/agentpassport.test.ts
     Full agent lifecycle
       ✓ should support a complete register → authorize → revoke lifecycle
 
-Tests: 12 passed, 12 total
+Test Suites: 1 passed, 1 total
+Tests:       12 passed, 12 total
 ```
 
 ---
 
-## CI/CD
+## 🔄 CI/CD Pipeline
 
-Automated CI runs on every push to `main`:
+Automated GitHub Actions CI runs on every commit pushed to `main`:
 
-1. ✅ Install Node.js v22 + dependencies
-2. ✅ TypeScript type-check (`tsc --noEmit`)
-3. ✅ Compact contract compilation
-4. ✅ Run all 12 Jest tests
-5. ✅ Build frontend (`npm run build`)
-6. ✅ Upload dist artifact
+1. ✅ Install Node.js v22 + npm dependencies
+2. ✅ TypeScript strict type verification (`tsc --noEmit`)
+3. ✅ Compact smart contract compilation
+4. ✅ Run all 12 Jest unit & contract integration tests
+5. ✅ Build production frontend (`npm run build`)
+6. ✅ Save & upload build artifacts
 
-See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the full pipeline.
-
----
-
-## Usage Guide
-
-For a complete step-by-step guide including setup, wallet connection, and troubleshooting, see:
-
-📖 **[docs/USAGE.md](./docs/USAGE.md)**
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for complete CI pipeline workflow configuration.
 
 ---
 
-## Project Structure
+## 📖 Complete Documentation & Guides
+
+- 📖 **[User Guide (docs/USAGE.md)](./docs/USAGE.md)** — Detailed walk-through for wallet connection, proof server configuration, and troubleshooting.
+- 📄 **[Proposal Document (PROPOSAL.md)](./PROPOSAL.md)** — Builder challenge proposal submission document.
+
+---
+
+## 📁 Project Structure
 
 ```
 .
 ├── contracts/
-│   └── agentpassport.compact       # Midnight Compact smart contract
-├── managed/                         # Compiled contract output (gitignored)
+│   └── agentpassport.compact       # Midnight Compact smart contract definition
+├── docs/
+│   ├── assets/                      # High-resolution screenshots & diagrams
+│   └── USAGE.md                     # Comprehensive step-by-step user guide
+├── managed/                         # Compiled Compact contract outputs (gitignored)
 ├── src/
 │   ├── components/
-│   │   ├── WalletConnect.tsx        # Lace wallet connection UI
-│   │   ├── AgentAuthorization.tsx   # ZK authorization dashboard
-│   │   └── Layout.tsx               # App shell with nav/footer
+│   │   ├── WalletConnect.tsx        # Lace wallet connection component
+│   │   ├── AgentAuthorization.tsx   # ZK proof control panel & forms
+│   │   └── MainframeHero.tsx        # Glassmorphic hero landing interface
 │   ├── hooks/
-│   │   └── useMidnight.ts           # Wallet state & contract interaction
+│   │   └── useMidnight.ts           # State management & Lace/Midnight API hook
 │   ├── utils/
-│   │   └── contract.ts              # Witness factories & contract helpers
-│   ├── App.tsx                      # Main application
-│   └── main.tsx                     # React entry point
+│   │   └── contract.ts              # Witness helper functions & byte utilities
+│   ├── App.tsx                      # Main application shell
+│   └── main.tsx                     # React root mount point
 ├── tests/
-│   └── agentpassport.test.ts        # 12-test contract logic suite
+│   └── agentpassport.test.ts        # 12-test suite covering circuits & ledger logic
 ├── .github/
-│   └── workflows/ci.yml             # GitHub Actions CI pipeline
-├── docs/
-│   └── USAGE.md                     # User guide
-├── PROPOSAL.md                      # Project proposal
-└── README.md                        # This file
+│   └── workflows/ci.yml             # GitHub Actions CI workflow configuration
+├── PROPOSAL.md                      # Project proposal submission
+└── README.md                        # Primary project documentation
 ```
 
 ---
 
-## Product X Profile
+## 📄 License
 
-🌐 **[@AgentPassport05 on X (Twitter)](https://x.com/AgentPassport05)** — Follow for updates on privacy-preserving AI agent authorization on Midnight Network.
-
----
-
-## License
-
-MIT © 2025 Archishman Sarkar
+Licensed under the [MIT License](./LICENSE) © 2025 Archishman Sarkar.
 
 ---
 
-*Built for the [Midnight Builder Challenge](https://risein.com) Level 4 — Track: AI (Midnight Request for Startups)*
+*Built for the **[Midnight Builder Challenge](https://risein.com) Level 4** — Track: AI (Midnight Request for Startups)*

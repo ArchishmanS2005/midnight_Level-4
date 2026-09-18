@@ -1,125 +1,157 @@
 # AgentPassport — Project Proposal
 
-## Track
-**AI (Midnight Request for Startups)**
+[![CI Pipeline](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml/badge.svg)](https://github.com/ArchishmanS2005/midnight_Level-4/actions/workflows/ci.yml)
+[![Midnight Network](https://img.shields.io/badge/Network-Midnight%20Preview-a855f7)](https://midnight.network)
+[![Live Demo](https://img.shields.io/badge/Vercel-Live%20Demo-000000?logo=vercel&logoColor=white)](https://midnight-level-4.vercel.app/)
+[![X Profile](https://img.shields.io/badge/X-AgentPassport05-1DA1F2?logo=x&logoColor=white)](https://x.com/AgentPassport05)
+[![License](https://img.shields.io/badge/License-MIT-06b6d4)](./LICENSE)
 
-## Product Name
+> **The Privacy Layer for Autonomous AI Agents**
+>
+> Give AI agents cryptographic permissions — not unrestricted access.
+> Prove authorization with Zero-Knowledge Proofs. Reveal nothing.
+
+---
+
+## 🎯 Track
+**AI (Midnight Request for Startups)** — Level 4 Builder Challenge
+
+## 🏷️ Product Name
 **AgentPassport**
 
-## Tagline
-> The Privacy Layer for Autonomous AI Agents
+## 🌐 Quick Links & Verification
+
+| Resource | Link |
+|----------|------|
+| 🚀 **Live Demo** | [midnight-level-4.vercel.app](https://midnight-level-4.vercel.app/) |
+| 📜 **Smart Contract** | [`4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4`](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
+| 🔍 **Midnight Explorer** | [Block 914,791 — Verified SUCCESS](https://explorer.preview.midnight.network/contracts/4ec57e9b77711da44ecfe6d2dd5be638fcb14832b8821290dce4f04561add3a4) |
+| 🐦 **X (Twitter)** | [@AgentPassport05](https://x.com/AgentPassport05) |
+| 💻 **GitHub Repository** | [github.com/ArchishmanS2005/midnight_Level-4](https://github.com/ArchishmanS2005/midnight_Level-4) |
 
 ---
 
-## Problem
+> [!IMPORTANT]
+> **The Core Problem**: Autonomous AI agents must act independently, but granting them full access to private keys or bank limits creates an unacceptable security risk. Requiring manual approval for every transaction destroys autonomy.
 
-Autonomous AI agents are increasingly being trusted to perform sensitive tasks on behalf of users: booking hotels, purchasing products, accessing APIs, managing files, and more. To do this, they need access to sensitive information:
+## 🚨 Problem Statement
 
-- Budget limits and financial credentials
-- API keys and authentication tokens
-- Personal permissions and authorization policies
-- User identity and behavioral data
+Autonomous AI agents are increasingly trusted to execute sensitive, high-value tasks on behalf of human users:
+- Booking hotels and travel tickets
+- Purchasing hardware or digital services
+- Interacting with paid APIs & LLM inference endpoints
+- Managing sensitive user files and personal policies
 
-**The current approach is dangerously naive.** Users either:
-1. Hand AI agents unrestricted access (massive security risk), or
-2. Constantly approve every micro-decision manually (defeats the purpose of autonomy)
+**The status quo forces a broken binary choice:**
+1. **Unrestricted Access**: Give the agent full private keys / cards — *catastrophic risk if compromised or hijacked by prompt injection.*
+2. **Manual Approval**: Prompt the human for every single micro-action — *ruins autonomous operation.*
 
-There is no middle ground. No cryptographic way to give an agent permission for _exactly_ what it needs, provably, without revealing everything.
+There is no middle ground: **No native cryptographic method to give an agent permission for *exactly* what it needs, provably, without exposing private data on-chain.**
 
 ---
 
-## Solution
+## 💡 The AgentPassport Solution
 
-**AgentPassport** is a privacy-first authorization layer built on **Midnight Network** that lets AI agents prove they are allowed to perform an action using **Zero-Knowledge Proofs** — without exposing:
+> [!NOTE]
+> **Zero-Knowledge Permissioning**: AgentPassport uses Midnight's private state to prove that an agent holds sufficient budget and valid credentials *without ever revealing the budget amount, agent identity, or credentials.*
 
-- The user's identity
-- The agent's private policy or permission budget
-- Financial data or credential contents
+**AgentPassport** is a privacy-first cryptographic authorization protocol built on the **Midnight Network**. It enables autonomous AI agents to prove permission compliance via **Zero-Knowledge Proofs (ZKPs)** on Midnight Preview Network.
 
 ### How It Works
 
-1. **User creates an AI agent** with private permissions (budget, credential, policy).
-2. **Agent requests an action** (e.g., "buy this hotel room for 150 tDUST").
-3. **AgentPassport generates a ZK proof** using Midnight's private state:
-   - Proves: "budget ≥ 150" WITHOUT revealing the budget.
-   - Proves: "credentials are valid" WITHOUT revealing the credential.
-4. **The Midnight smart contract verifies the proof** on-chain.
-5. **Action is approved or rejected** — no sensitive data ever touches the blockchain.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User / AI Agent
+    participant Vault as Off-Chain ZK Vault (Local)
+    participant Circuit as Compact ZK Circuit
+    participant Midnight as Midnight Consensus Node
+
+    User->>Vault: 1. Generate Agent Identity & Private Budget (tDUST)
+    User->>Circuit: 2. Request Action Authorization (e.g. 150 tDUST)
+    Circuit->>Circuit: 3. Generate ZK Proof: Budget >= 150 & Secret Key valid
+    Circuit->>Midnight: 4. Submit Proof to Midnight Contract (4ec57e9b...)
+    Midnight->>Midnight: 5. Verify ZK Proof on-chain (No secrets revealed)
+    Midnight-->>User: 6. Return Verdict: Action Authorized / Rejected
+```
+
+1. **Agent Registration**: User generates a private agent key (`agent_secret_key`) and credential hash (`credential_hash`).
+2. **Action Request**: Agent requests authorization for an action specifying requested cost (e.g., `150 tDUST`).
+3. **Client-Side ZK Proof**: AgentPassport generates a zero-knowledge proof proving `permission_budget >= requested_amount` locally.
+4. **On-Chain Verification**: Midnight smart contract verifies the ZK proof on-chain without learning the budget or credentials.
+5. **Private State Guarantee**: The ledger updates public counters (`total_authorizations`), leaving all underlying secrets off-chain.
 
 ---
 
-## MVP Features
+## ✨ Core Features & Deliverables
 
-| Feature | Description |
-|---------|-------------|
-| **AI Agent Registry** | Register agents with private identity keys |
-| **Private Permission Vault** | Store budget and credentials as ZK private witnesses |
-| **ZK Authorization Engine** | Prove budget sufficiency without revealing the budget |
-| **Midnight Contract Verification** | Compact smart contract on Preview network |
-| **Live Dashboard** | React + TypeScript UI with real-time proof status |
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Smart Contract | Midnight Compact |
-| ZK Proofs | Auto-generated by Compact compiler |
-| Network | Midnight Preview Network |
-| Wallet | Lace (Midnight-compatible) |
-| Frontend | React 18 + Vite + TypeScript |
-| Styling | Tailwind CSS |
-| Tests | Jest + ts-jest |
-| CI/CD | GitHub Actions |
+| Feature | Description | Status |
+|---------|-------------|--------|
+| 🤖 **AI Agent Passport Vault** | Private identity creation & local credential hashing | ✅ Completed |
+| 🔐 **Private Permission Engine** | ZK inequality circuit (`budget >= requested_amount`) | ✅ Completed |
+| 📜 **Midnight Compact Contract** | On-chain deployment on Midnight Preview Network | ✅ Verified (`4ec57e9b...`) |
+| 💼 **Lace Wallet Integration** | Seamless connection & DApp API transaction signing | ✅ Completed |
+| ⚡ **Real-Time ZK Dashboard** | React 18 + Vite + Tailwind CSS control center | ✅ Live on Vercel |
+| 🧪 **Comprehensive Test Suite** | 12/12 Jest unit & contract integration tests passing | ✅ 100% Passing |
+| 🔄 **Automated CI/CD Pipeline** | GitHub Actions build, test, and artifact pipeline | ✅ Passing |
 
 ---
 
-## Privacy Model (Technical)
+## 🔒 Privacy Model (Zero-Knowledge Architecture)
 
-### Public (On-Chain)
-- `agent_count` — total registered agents
-- `total_authorizations` — approved action tally
-- `total_rejections` — denied action tally
+### 🌐 Public State (On-Chain Ledger)
+Only aggregate statistics are recorded on the Midnight blockchain:
+- `agent_count`: Total registered active agents
+- `total_authorizations`: Total approved actions
+- `total_rejections`: Total denied actions
 
-### Private (Off-Chain, Never On-Chain)
-- `agent_secret_key` — private Bytes<32> identity key
-- `permission_budget` — Uint<64> spending limit
-- `credential_hash` — Bytes<32> credential fingerprint
+### 🔑 Private Witnesses (Local Device Only — Never On-Chain)
+All sensitive parameters remain strictly off-chain inside the local ZK circuit environment:
+- `agent_secret_key`: Private 256-bit agent identity key
+- `permission_budget`: Spending limit in tDUST
+- `credential_hash`: Cryptographic fingerprint of credentials
 
-### ZK Proof Proves (Without Revealing)
-- `budget >= requested_amount`
-- `agent_secret_key != 0` (agent is registered)
-- `credential_hash != 0` (credentials are valid)
-
----
-
-## Why Midnight?
-
-Midnight is the only blockchain with **native support for private state** combined with **ZK proof verification**. The Compact language makes it possible to write circuits that:
-
-1. Keep private data in local witnesses (never sent to the chain)
-2. Automatically generate ZK circuits for privacy-preserving assertions
-3. Selectively disclose only the minimum needed (e.g., "budget is sufficient")
-
-No other platform offers this combination for production use at this level of developer ergonomics.
+### 🛡️ What the ZK Circuit Proves (Without Exposing Data)
+- `budget >= requested_amount` — Proves financial capability without revealing budget
+- `agent_secret_key != 0` — Proves agent existence without revealing identity
+- `credential_hash != 0` — Proves credential validity without exposing credential
+- `Caller ownership` — Proves user owns the passport secret key
 
 ---
 
-## Team
+## 🛠️ Technology Stack
 
-**Archishman Sarkar** — Solo developer
-- Builder, Midnight Network ecosystem
-- GitHub: https://github.com/ArchishmanS2005
+| Layer | Technology | Role |
+|-------|-----------|------|
+| **Smart Contract** | [Midnight Compact](https://docs.midnight.network) | Domain logic & ZK proof verification |
+| **ZK Circuits** | Auto-generated Compact Circuits | Selective disclosure & private assertions |
+| **Blockchain** | Midnight Preview Network | Decentralized consensus & state management |
+| **Wallet API** | [Lace Wallet](https://www.lace.io) | DApp connection & transaction signing |
+| **Frontend** | React 18 + Vite + TypeScript | Modern glassmorphism control center UI |
+| **Styling** | Tailwind CSS + Vanilla CSS | Dark mode modern aesthetics |
+| **Testing** | Jest + `ts-jest` | Contract logic & circuit verification suite |
+| **CI/CD** | GitHub Actions | Automated build & test execution |
 
 ---
 
-## Repository
+## 🚀 Why Midnight Network?
 
-https://github.com/ArchishmanS2005/midnight_Level-4
+> [!TIP]
+> **Why Midnight is Essential**: Midnight is the only blockchain architecture offering native private state coupled with zero-knowledge proof verification at scale. Compact allows developers to write straightforward imperative code that automatically compiles into ZK circuits.
+
+Without Midnight, building private agent authorization requires custom ZK-SNARK circuits, complex trusted setups, or expensive off-chain rollups. Midnight's Compact language makes private state a first-class citizen.
 
 ---
 
-## Demo
+## 👨‍💻 Team & Developer Information
 
-Preview Network deployment — see README.md for contract address and live demo link.
+- **Developer**: Archishman Sarkar
+- **GitHub**: [github.com/ArchishmanS2005](https://github.com/ArchishmanS2005)
+- **Role**: Solo Builder & Midnight Ecosystem Developer
+- **Challenge**: [Midnight Builder Challenge](https://risein.com) Level 4 — Track: AI (Midnight Request for Startups)
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](./LICENSE).
